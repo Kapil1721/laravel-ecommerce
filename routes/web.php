@@ -36,4 +36,4 @@ Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add')
 // Route::get('blogs/{url}', [MainController::class, 'blogDetail'])->name('blog.detail');
 // Route::post('contact-us', [MainController::class, 'enquiry'])->name('enquiry');
 
-Route::get('categories', [EcommerceController::class, 'categories'])->name('categories');
+// Route::get('categories', [EcommerceController::class, 'categories'])->name('categories');
