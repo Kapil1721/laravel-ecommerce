@@ -21,7 +21,7 @@ Route::get('teams', [MainController::class, 'teams'])->name('teams');
 Route::get('shop-collection', [MainController::class, 'shopcollection'])->name('shopcollection');
 Route::get('product-inner', [MainController::class, 'productdetail'])->name('product-inner');
 Route::get('my-account', [MainController::class, 'myaccount'])->name('my-account');
-Route::get('category', [MainController::class,'category']);
+// Route::get('category', [MainController::class,'category']);
 // Route::get('shopping-cart', [MainController::class,'cart'])->name('cart.shopping');
 Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
 

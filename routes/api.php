@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ProductController;
 
 // Routes that require authentication (Sanctum)
@@ -19,7 +20,7 @@ Route::prefix('admin')->as('admin.')->middleware('auth:sanctum')->group(function
         return $request->user();
     });
 
-    Route::get('categories', [AuthController::class, 'categories'])->name('categories');
+    Route::apiResource('categories', CategoryController::class);
 
     Route::apiResource('products', ProductController::class);
     Route::get('products/search/{name}', [ProductController::class, 'search']);

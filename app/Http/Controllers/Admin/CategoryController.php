@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
 
 class CategoryController extends Controller
 {
@@ -13,22 +15,9 @@ class CategoryController extends Controller
      */
     public function index()
     {
-
-        // {
-               
-        //     $categories = Category::where('status', true)->get();
-         
-    
-        //     return view('category.index', compact('categories'));
-        // }
-     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        Log::info('Success');
+        $category = Category::all();
+        return response()->json($category, 200);
     }
 
     /**
@@ -36,7 +25,23 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        Log::info($request->all());
+        $validator = Validator::make($request->all(), [
+            'name'=>'required',
+            'description'=>'required',
+            'status'=>'required',
+       
+        ]);
+       if ($validator->fails()) {
+           return response()->json(['error'=>$validator->errors()], 400);
+       }
+       $category = new Category();
+       $category->category_id = $request->category_id;
+       $category->name = $request->name;
+       $category->description = $request->description;
+       $category->status = $request->status;
+       $category->save();
+        return response()->json(['message' => 'Category created successfully'], 201);
     }
 
     /**
@@ -44,15 +49,8 @@ class CategoryController extends Controller
      */
     public function show(string $id)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
+        $category = Category::find($id);
+        return response()->json($category, 200);
     }
 
     /**
@@ -60,14 +58,35 @@ class CategoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
-    }
+        Log::info($request->all());
+        $validator = Validator::make($request->all(), [
+            'name'=>'required',
+            'description'=>'required',
+            'status'=>'required'
+           
+        ]);
+       if ($validator->fails()) {
+           return response()->json(['error'=>$validator->errors()], 400);
+       }
+       $category = Category::findOrFail($id);
+       $category->category_id = $request->category_id;
+       $category->name = $request->name;
+       $category->description = $request->description;
+       $category->status = $request->status;
+       $category->save();
+        return response()->json(['message' => 'Category updated successfully'], 201);
+      }
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
+    
     {
-        //
-    }
+
+        Category::destroy($id);
+        return response()->json(['message' => 'Category deleted successfully'], 200);
+      }
+       
+         
 }
