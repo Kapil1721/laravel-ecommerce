@@ -7,9 +7,11 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\BlogController;
+use App\Http\Controllers\Admin\MediaController;
+use App\Http\Controllers\admin\CouponController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\CategoryController;
-use App\Http\Controllers\admin\CouponController;
+use App\Http\Controllers\Admin\VariantsController;
 
 // Routes that require authentication (Sanctum)
 Route::prefix('admin')->as('admin.')->middleware('guest:sanctum')->group(function () {
@@ -30,6 +32,9 @@ Route::prefix('admin')->as('admin.')->middleware('auth:sanctum')->group(function
 
     Route::apiResource('blogs', BlogController::class);
     Route::apiResource('coupons', CouponController::class);
+    Route::apiResource('variants', VariantsController::class);
+    Route::apiResource('media', MediaController::class);
+
     Route::post('coupons/apply', [CouponController::class, 'apply']);
    
 

@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit27ca67c84727d013999fc13acf812e17
+class ComposerStaticInit1d7e74f9adef9ae16839e90303215c8a
 {
     public static $files = array (
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
@@ -338,8 +338,8 @@ class ComposerStaticInit27ca67c84727d013999fc13acf812e17
         ),
         'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-factory/src',
-            1 => __DIR__ . '/..' . '/psr/http-message/src',
+            0 => __DIR__ . '/..' . '/psr/http-message/src',
+            1 => __DIR__ . '/..' . '/psr/http-factory/src',
         ),
         'Psr\\Http\\Client\\' => 
         array (
@@ -379,8 +379,8 @@ class ComposerStaticInit27ca67c84727d013999fc13acf812e17
         ),
         'League\\Uri\\' => 
         array (
-            0 => __DIR__ . '/..' . '/league/uri',
-            1 => __DIR__ . '/..' . '/league/uri-interfaces',
+            0 => __DIR__ . '/..' . '/league/uri-interfaces',
+            1 => __DIR__ . '/..' . '/league/uri',
         ),
         'League\\MimeTypeDetection\\' => 
         array (
@@ -526,12 +526,15 @@ class ComposerStaticInit27ca67c84727d013999fc13acf812e17
     );
 
     public static $classMap = array (
+        'App\\Http\\Controllers\\Admin\\AuthController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/AuthController.php',
+        'App\\Http\\Controllers\\Admin\\BlogController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/BlogController.php',
         'App\\Http\\Controllers\\Admin\\CategoryController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/CategoryController.php',
+        'App\\Http\\Controllers\\Admin\\MediaController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/MediaController.php',
         'App\\Http\\Controllers\\Admin\\ProductController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/ProductController.php',
+        'App\\Http\\Controllers\\Admin\\VariantsController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/VariantsController.php',
         'App\\Http\\Controllers\\CartController' => __DIR__ . '/../..' . '/app/Http/Controllers/CartController.php',
         'App\\Http\\Controllers\\CheckoutController' => __DIR__ . '/../..' . '/app/Http/Controllers/CheckoutController.php',
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
-        'App\\Http\\Controllers\\EcommerceController' => __DIR__ . '/../..' . '/app/Http/Controllers/EcommerceController.php',
         'App\\Http\\Controllers\\MainController' => __DIR__ . '/../..' . '/app/Http/Controllers/MainController.php',
         'App\\Http\\Controllers\\OrderController' => __DIR__ . '/../..' . '/app/Http/Controllers/OrderController.php',
         'App\\Models\\Blog' => __DIR__ . '/../..' . '/app/Models/Blog.php',
@@ -541,9 +544,11 @@ class ComposerStaticInit27ca67c84727d013999fc13acf812e17
         'App\\Models\\Category' => __DIR__ . '/../..' . '/app/Models/Category.php',
         'App\\Models\\Contact' => __DIR__ . '/../..' . '/app/Models/Contact.php',
         'App\\Models\\Content' => __DIR__ . '/../..' . '/app/Models/Content.php',
+        'App\\Models\\Coupon' => __DIR__ . '/../..' . '/app/Models/Coupon.php',
         'App\\Models\\Enquiry' => __DIR__ . '/../..' . '/app/Models/Enquiry.php',
         'App\\Models\\Faqs' => __DIR__ . '/../..' . '/app/Models/Faqs.php',
         'App\\Models\\LoginBanner' => __DIR__ . '/../..' . '/app/Models/LoginBanner.php',
+        'App\\Models\\Media' => __DIR__ . '/../..' . '/app/Models/Media.php',
         'App\\Models\\Menu' => __DIR__ . '/../..' . '/app/Models/Menu.php',
         'App\\Models\\Meta' => __DIR__ . '/../..' . '/app/Models/Meta.php',
         'App\\Models\\Order' => __DIR__ . '/../..' . '/app/Models/Order.php',
@@ -558,6 +563,7 @@ class ComposerStaticInit27ca67c84727d013999fc13acf812e17
         'App\\Models\\Team' => __DIR__ . '/../..' . '/app/Models/Team.php',
         'App\\Models\\Testimonial' => __DIR__ . '/../..' . '/app/Models/Testimonial.php',
         'App\\Models\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
+        'App\\Models\\Variant' => __DIR__ . '/../..' . '/app/Models/Variant.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',
         'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
         'Binafy\\LaravelCart\\Cartable' => __DIR__ . '/..' . '/binafy/laravel-cart/src/Cartable.php',
@@ -6675,9 +6681,9 @@ class ComposerStaticInit27ca67c84727d013999fc13acf812e17
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit27ca67c84727d013999fc13acf812e17::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit27ca67c84727d013999fc13acf812e17::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit27ca67c84727d013999fc13acf812e17::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit1d7e74f9adef9ae16839e90303215c8a::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit1d7e74f9adef9ae16839e90303215c8a::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit1d7e74f9adef9ae16839e90303215c8a::$classMap;
 
         }, null, ClassLoader::class);
     }

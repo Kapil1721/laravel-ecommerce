@@ -16,7 +16,7 @@ class CategoryController extends Controller
     public function index()
     {
         Log::info('Success');
-        $category = Category::all();
+        $category = Category::with('variants')->get();
         return response()->json($category, 200);
     }
 
@@ -27,8 +27,16 @@ class CategoryController extends Controller
     {
         Log::info($request->all());
         $validator = Validator::make($request->all(), [
+            
             'name'=>'required',
             'description'=>'required',
+            'status'=>'required',
+            'parent_id'=>'nullable|exists:categories,id',
+            'meta_title'=>'required',
+            'meta_description'=>'required',
+            'meta_keywords'=>'required',
+            'slug'=>'required',
+     
             'status'=>'required',
        
         ]);
@@ -36,10 +44,16 @@ class CategoryController extends Controller
            return response()->json(['error'=>$validator->errors()], 400);
        }
        $category = new Category();
-       $category->category_id = $request->category_id;
+
        $category->name = $request->name;
        $category->description = $request->description;
        $category->status = $request->status;
+       $category->parent_id = $request->parent_id;
+       $category->meta_title = $request->meta_title;
+       $category->meta_description = $request->meta_description;
+       $category->meta_keywords = $request->meta_keywords;
+       $category->slug = $request->slug;
+
        $category->save();
         return response()->json(['message' => 'Category created successfully'], 201);
     }
@@ -60,19 +74,36 @@ class CategoryController extends Controller
     {
         Log::info($request->all());
         $validator = Validator::make($request->all(), [
+        
             'name'=>'required',
             'description'=>'required',
-            'status'=>'required'
+            'status'=>'required',
+            'parent_id'=>'nullable|exists:categories,id',
+            'meta_title'=>'required',
+            'meta_description'=>'required',
+            'meta_keywords'=>'required',
+            'slug'=>'required',
+            'status'=>'required',
+     
+            
            
         ]);
        if ($validator->fails()) {
            return response()->json(['error'=>$validator->errors()], 400);
        }
        $category = Category::findOrFail($id);
-       $category->category_id = $request->category_id;
+       
        $category->name = $request->name;
        $category->description = $request->description;
        $category->status = $request->status;
+         $category->parent_id = $request->parent_id;
+         $category->meta_title = $request->meta_title;
+            $category->meta_description = $request->meta_description;
+            $category->meta_keywords = $request->meta_keywords;
+            $category->slug = $request->slug;
+            $category->status = $request->status;
+     
+          
        $category->save();
         return response()->json(['message' => 'Category updated successfully'], 201);
       }
