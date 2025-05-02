@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
+
+use Illuminate\Support\Facades\Response;
 
 class TagController extends Controller
 {
@@ -23,14 +26,7 @@ class TagController extends Controller
     }
 
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
+  
     /**
      * Store a newly created resource in storage.
      */
@@ -51,11 +47,11 @@ class TagController extends Controller
         $tags = Tag::create([
            
             'name' => $request->name,
-            'slug' => $request->value,
+            'slug' => $request->slug,
         ]);
         //
         $tags->save();
-        return response()->json(['message' => 'Tags created successfully'], 201);
+        return response()->json(['message' => 'Tag created successfully'], 201);
     }
     /**
      * Display the specified resource.
@@ -66,7 +62,7 @@ class TagController extends Controller
         // Find the variant by ID
         $tags = Tag::find($id);
         if (!$tags) {
-            return response()->json(['message' => 'Tags not found'], 404);
+            return response()->json(['message' => 'Tag not found'], 404);
         }
         // Return the variant as a JSON response    
         return response()->json($tags);
@@ -98,14 +94,14 @@ class TagController extends Controller
         // Find the variant by ID
         $tags = Tag::find($id);  
         if (!$tags) {
-            return response()->json(['message' => 'Tags not found'], 404);
+            return response()->json(['message' => 'Tag not found'], 404);
         }                   
         // Update the variant with the request data
        
         $tags->name = $request->name;            
-        $tags->value = $request->value;
+        $tags->slug = $request->slug;
         $tags->save();
-        return response()->json(['message' => 'Tags Updated Successfully'], 201);
+        return response()->json(['message' => 'Tag Updated Successfully'], 201);
 
     }
 
@@ -115,6 +111,8 @@ class TagController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $tags = Tag::destroy($id);
+        Log::info($tags);
+        return response()->json(['message' => 'Tag deleted successfully'], 200); 
     }
 }
