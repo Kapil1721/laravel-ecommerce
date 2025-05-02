@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\MainController;
+use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\MediaController;
@@ -34,6 +35,7 @@ Route::prefix('admin')->as('admin.')->middleware('auth:sanctum')->group(function
     Route::apiResource('coupons', CouponController::class);
     Route::apiResource('variants', VariantsController::class);
     Route::apiResource('media', MediaController::class);
+    Route::apiResource('tags', TagController::class);
 
     Route::post('coupons/apply', [CouponController::class, 'apply']);
    

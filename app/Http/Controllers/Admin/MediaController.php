@@ -26,33 +26,38 @@ class MediaController extends Controller
     public function store(Request $request)
     {
         Log::info('Media upload request', $request->all());
-    
-        // Validate the request
+
         $validator = Validator::make($request->all(), [
-            'file' => 'required|file|mimes:jpg,png,jpeg,gif,mp4,avi,svg|max:10240',
-            'alt' => 'required|string|max:255',
+            'file' => 'required',
+            'file.*' => 'file|mimes:jpg,jpeg,png,gif,mp4,avi,svg,tmp|max:10240',
         ]);
-    
+
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()], 400);
         }
+
+        $uploadedMedia = [];
+
         if ($request->hasFile('file')) {
-            $uploadedFile = $request->file('file');
-            $filename = time() . '_' . $uploadedFile->getClientOriginalName();
-            $filenameWithoutExt = pathinfo($filename, PATHINFO_FILENAME);
-            $path = $uploadedFile->storeAs('images', $filename);
-            // Create a new media entry
-            $media = Media::create([
-                'file' => $path,
-                'type' => $uploadedFile->getMimeType(),
-                'size' => number_format($uploadedFile->getSize() / 1024, 2),
-                'extension' => $uploadedFile->getClientOriginalExtension(),
-                'alt' => $filenameWithoutExt,
-            ]);
-    
+            foreach ($request->file('file') as $uploadedFile) {
+                $filename = time() . '_' . $uploadedFile->getClientOriginalName();
+                $filenameWithoutExt = pathinfo($filename, PATHINFO_FILENAME);
+                $path = $uploadedFile->storeAs('images', $filename);
+
+                $media = Media::create([
+                    'file' => $path,
+                    'type' => $uploadedFile->getMimeType(),
+                    'size' => number_format($uploadedFile->getSize() / 1024, 2),
+                    'extension' => $uploadedFile->getClientOriginalExtension(),
+                    'alt' => $filenameWithoutExt,
+                ]);
+
+                $uploadedMedia[] = $media;
+            }
+
             return response()->json([
                 'message' => 'Media uploaded successfully',
-                'data' => $media,
+                'data' => $uploadedMedia,
             ], 201);
         } else {
             return response()->json(['error' => 'No file uploaded.'], 400);
