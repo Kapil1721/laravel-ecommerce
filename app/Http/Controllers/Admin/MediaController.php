@@ -51,16 +51,21 @@ class MediaController extends Controller
                     'extension' => $uploadedFile->getClientOriginalExtension(),
                     'alt' => $filenameWithoutExt,
                 ]);
+                $media->url = asset('uploads/');
 
                 $uploadedMedia[] = $media;
             }
 
+
+
             return response()->json([
                 'message' => 'Media uploaded successfully',
                 'data' => $uploadedMedia,
+
             ], 201);
         } else {
             return response()->json(['error' => 'No file uploaded.'], 400);
+
         }
     }
     /**
