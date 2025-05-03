@@ -20,6 +20,7 @@ class ProductController extends Controller
         $limit = $request->limit ?? 100;
         $offset = ($page - 1) * $limit;
         $products = Product::offset($offset)->limit($limit)->with('category.variants')->get(); 
+
         Log::info($products);
         
 
@@ -35,26 +36,26 @@ class ProductController extends Controller
     {
         Log::info($request->all());
         $validator = Validator::make($request->all(), [
-            // 'category_id'=>'required',
+            'category_id'=>'required',
       
             'name'=>'required',
-            // 'short_description' =>'required',
-            // 'long_description'=>'required',
-            'sale_price'=>'required',
-            'actual_price'=>'required',
-            // 'track_stock'=>'required',
-            // 'continue_when_oos'=>'required',
-            // 'if_sku'=>'required',
-            // 'sku'=>'required',
-            // 'barcode'=>'required',
-            // 'shipping'=>'required',
-            // 'weight'=>'required',
-            // 'meta_title'=>'required',
-            // 'meta_description'=>'required',
-            // 'meta_keywords'=>'required',
-            // 'status'=>'required',
-            // 'slug'=>'required',
-            // 'product_type'=>'required',
+            'short_description' =>'nullable',
+            'long_description'=>'nullable',
+            'sale_price'=>'nullable',
+            'actual_price'=>'nullable',
+            'track_stock'=>'nullable',
+            'continue_when_oos'=>'nullable',
+            'if_sku'=>'nullable',
+            'sku'=>'nullable',
+            'barcode'=>'nullable',
+            'shipping'=>'nullable',
+            'weight'=>'nullable',
+            'meta_title'=>'nullable',
+            'meta_description'=>'nullable',
+            'meta_keywords'=>'nullable',
+            'status'=>'nullable',
+            'slug'=>'nullable',
+            'product_type'=>'nullable',
            
         
 ]);
@@ -64,25 +65,26 @@ class ProductController extends Controller
        $product = new Product();
        $product->category_id = $request->category_id;
        $product->name = $request->name;
-    //    $product->short_description = $request->short_description;
-    //    $product->long_description = $request->long_description;
+       $product->short_description = $request->short_description;
+       $product->long_description = $request->long_description;
        $product->sale_price = $request->sale_price;
        $product->actual_price = $request->actual_price;
-    //    $product->track_stock = $request->track_stock;
-    //    $product->continue_when_oos = $request->continue_when_oos;
-    //    $product->if_sku = $request->if_sku;
-    //    $product->sku = $request->sku;
-    //    $product->barcode = $request->barcode;
-    //    $product->shipping = $request->shipping;
-    //    $product->weight = $request->weight;
-    //    $product->meta_title = $request->meta_title;
-    //    $product->meta_description = $request->meta_description;
-    //    $product->meta_keywords = $request->meta_keywords;
-    //    $product->product_type = $request->product_type;
+       $product->track_stock = $request->track_stock;
+       $product->continue_when_oos = $request->continue_when_oos;
+       $product->if_sku = $request->if_sku;
+       $product->sku = $request->sku;
+       $product->barcode = $request->barcode;
+       $product->shipping = $request->shipping;
+       $product->weight = $request->weight;
+       $product->meta_title = $request->meta_title;
+       $product->meta_description = $request->meta_description;
+       $product->meta_keywords = $request->meta_keywords;
+       $product->product_type = $request->product_type;
       
 
       
        $product->save();
+         $product->media()->sync($request->media);
         return response()->json(['message' => 'Product created successfully'], 201);
     }
 
@@ -103,51 +105,54 @@ class ProductController extends Controller
         Log::info($request->all());
         $validator = Validator::make($request->all(), [
             'name'=>'required',
-            // 'category_id'=>'required',
-            // 'short_description' =>'required',
-            // 'long_description'=>'required',
-            'sale_price'=>'required',
-            'actual_price'=>'required',
-            // 'track_stock'=>'required',
-            // 'continue_when_oos'=>'required',
-            // 'if_sku'=>'required',
-            // 'sku'=>'required',
-            // 'barcode'=>'required',
-            // 'shipping'=>'required',
-            // 'weight'=>'required',
-            // 'meta_title'=>'required',   
-            // 'meta_description'=>'required',
-            // 'meta_keywords'=>'required',
-            // 'status'=>'required',
-            // 'slug'=>'required',
-            // 'product_type'=>'required', 
+            'category_id'=>'nullable',
+            'short_description' =>'nullable',
+            'long_description'=>'nullable',
+            'sale_price'=>'nullable',
+            'actual_price'=>'nullable',
+            'track_stock'=>'nullable',
+            'continue_when_oos'=>'nullable',
+            'if_sku'=>'nullable',
+            'sku'=>'nullable',
+            'barcode'=>'nullable',
+            'shipping'=>'nullable',
+            'weight'=>'nullable',
+            'meta_title'=>'nullable',   
+            'meta_description'=>'nullable',
+            'meta_keywords'=>'nullable',
+            'status'=>'nullable',
+            'slug'=>'nullable',
+            'product_type'=>'nullable', 
 
  ]);
        if ($validator->fails()) {
            return response()->json(['error'=>$validator->errors()], 400);
        }
        $product = Product::findOrFail($id);
-    //    $product->category_id = $request->category_id;
+       $product->category_id = $request->category_id;
        $product->name = $request->name;
-    //    $product->short_description = $request->short_description;
-    //    $product->long_description = $request->long_description;
+       $product->short_description = $request->short_description;
+       $product->long_description = $request->long_description;
        $product->sale_price = $request->sale_price;
        $product->actual_price = $request->actual_price;
-    //    $product->track_stock = $request->track_stock;
-    //    $product->continue_when_oos = $request->continue_when_oos;
-    //    $product->if_sku = $request->if_sku;
-    //    $product->sku = $request->sku;
-    //    $product->barcode = $request->barcode;
-    //    $product->shipping = $request->shipping;
-    //    $product->weight = $request->weight;
-    //    $product->meta_title = $request->meta_title;
-    //    $product->meta_description = $request->meta_description;
-    //    $product->meta_keywords = $request->meta_keywords;
-    //    $product->status = $request->status;
-    //    $product->slug = $request->slug;
-    //    $product->product_type = $request->product_type;
+       $product->track_stock = $request->track_stock;
+       $product->continue_when_oos = $request->continue_when_oos;
+       $product->if_sku = $request->if_sku;
+       $product->sku = $request->sku;
+       $product->barcode = $request->barcode;
+       $product->shipping = $request->shipping;
+       $product->weight = $request->weight;
+       $product->meta_title = $request->meta_title;
+       $product->meta_description = $request->meta_description;
+       $product->meta_keywords = $request->meta_keywords;
+       $product->status = $request->status;
+       $product->slug = $request->slug;
+       $product->product_type = $request->product_type;
 
 $product->save();
+        if ($request->has('media')) {
+            $product->media()->sync($request->media);
+        }
         return response()->json(['message' => 'Product updated successfully'], 201);
     }
     
@@ -165,5 +170,15 @@ $product->save();
     public function search(string $name)
     {
        return Product::where('name','like','%'.$name.'%')->get();
+    }
+
+    public function inventory($id)
+    {
+        $product = Product::with('inventory')->find($id);
+        Log::info($product);
+        if (!$product) {
+            return response()->json(['message' => 'Product not found'], 404);
+        }
+        return response()->json($product->inventory, 200);
     }
 }

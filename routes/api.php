@@ -13,6 +13,7 @@ use App\Http\Controllers\admin\CouponController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\VariantsController;
+use App\Http\Controllers\admin\InventoryController;
 
 // Routes that require authentication (Sanctum)
 Route::prefix('admin')->as('admin.')->middleware('guest:sanctum')->group(function () {
@@ -27,15 +28,23 @@ Route::prefix('admin')->as('admin.')->middleware('auth:sanctum')->group(function
         return $request->user();
     });
 
-    Route::apiResource('categories', CategoryController::class);
+    Route::get('categories/{id}/variants', [CategoryController::class,'variants'])->name('categories.variants');
 
+    Route::apiResource('categories', CategoryController::class);
+    
+    Route::get('products/{id}/inventory', [ProductController::class,'inventory'])->name('products.inventory');
     Route::apiResource('products', ProductController::class);
 
     Route::apiResource('blogs', BlogController::class);
     Route::apiResource('coupons', CouponController::class);
     Route::apiResource('variants', VariantsController::class);
+
     Route::apiResource('media', MediaController::class);
     Route::apiResource('tags', TagController::class);
+    Route::apiResource('inventory', InventoryController::class);
+
+
+
 
     Route::post('coupons/apply', [CouponController::class, 'apply']);
    

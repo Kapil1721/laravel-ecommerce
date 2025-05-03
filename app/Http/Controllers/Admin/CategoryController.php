@@ -118,6 +118,17 @@ class CategoryController extends Controller
         Category::destroy($id);
         return response()->json(['message' => 'Category deleted successfully'], 200);
       }
+
+    public function variants($id)
+    {
+
+        $category = Category::with('variants')->find($id);
+        Log::info($category);
+        if (!$category) {
+            return response()->json(['message' => 'Category not found'], 404);
+        }
+        return response()->json($category->variants, 200);
+    }
        
          
 }
