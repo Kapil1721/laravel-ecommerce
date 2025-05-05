@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Inventory;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
@@ -85,7 +86,35 @@ class ProductController extends Controller
       
        $product->save();
          $product->media()->sync($request->media);
+        if($request->inventory) {
+            foreach ($request->inventory as $req) {
+                $inventory = new Inventory();
+                $inventory->product_id = $product->id;
+                $inventory->price = $req->inventory['price'];
+                $inventory->compare_at_price = $req->inventory['compare_at_price'];
+                $inventory->cost_per_item = $req->inventory['cost_per_item'];
+                $inventory->profit = $req->inventory['profit'];
+                $inventory->margin = $req->inventory['margin'];
+                $inventory->qty = $req->inventory['qty'];
+                $inventory->sku = $req->inventory['sku'];
+                $inventory->barcode = $req->inventory['barcode'];
+                $inventory->track_quantity = $req->inventory['track_quantity'];
+                $inventory->continue_when_oos = $req->inventory['continue_when_oos'];
+                $inventory->save();
+                // if ($request->has('media')) {
+                //     $product->inventory->media()->sync($request->media);
+                // }
+                $inventory->variations()->attach($req->variant_id, ['value' => $req->value]);
+            }
+
+        }
+
+
+
+
         return response()->json(['message' => 'Product created successfully'], 201);
+
+
     }
 
     /**
