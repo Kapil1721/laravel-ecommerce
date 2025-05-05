@@ -13,6 +13,11 @@ class Media extends Model
     // public function category() {
     //     return $this->belongsTo(Category::class, 'category_id', 'id');
     // }
+
+    protected $appends = ['full_path'];
+    public function getFullPathAttribute() {
+        return asset("uploads/{$this->file}");
+    }
 }
 
 
