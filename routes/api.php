@@ -41,7 +41,7 @@ Route::prefix('admin')->as('admin.')->middleware('auth:sanctum')->group(function
 
     Route::apiResource('media', MediaController::class);
     Route::apiResource('tags', TagController::class);
-    Route::apiResource('inventory', InventoryController::class);
+    Route::apiResource('inventories', InventoryController::class);
 
 
 

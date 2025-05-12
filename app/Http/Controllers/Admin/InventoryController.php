@@ -15,7 +15,7 @@ class InventoryController extends Controller
     public function index()
     {
         Log::info('Success');
-        $inventories = Inventory::with('variations')->get();
+        $inventories = Inventory::with(['product.media', 'media'])->get();
         return response()->json($inventories, 200);
     }
 
@@ -51,7 +51,9 @@ class InventoryController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $inventory = Inventory::with(['product.media', 'media'])->findOrFail($id);
+        $inventories = Inventory::with(['product.media', 'media'])->where('product_id', $inventory->product_id)->get();
+        return response()->json(compact('inventory', 'inventories'), 200);
     }
 
     /**
@@ -59,6 +61,7 @@ class InventoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        Log::info($request->all());
         // price, compare_at_price, cost_per_item, profit, margin, qty, sku, barcode, track_quantity, continue_when_oos, media
         $request->validate([
             'price' => 'required|numeric',
@@ -85,11 +88,8 @@ class InventoryController extends Controller
             'barcode' => $request->barcode,
             'track_quantity' => $request->track_quantity,
             'continue_when_oos' => $request->continue_when_oos,
+            'media_id' => $request->media_id
         ]);
-
-        if ($request->has('media')) {
-            $inventory->sync($request->media);
-        }
         return response()->json([
             'message' => 'Inventory updated successfully',
             'inventory' => $inventory,
@@ -104,6 +104,8 @@ class InventoryController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $inventory = Inventory::findOrFail($id);
+        $inventory->delete();
+        return response()->json(['message' => 'Inventory deleted successfully'], 200);
     }
 }

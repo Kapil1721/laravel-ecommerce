@@ -16,8 +16,8 @@ class CategoryController extends Controller
     public function index()
     {
         Log::info('Success');
-        $category = Category::with('variants')->get();
-        return response()->json($category, 200);
+        $categories = Category::with('variants')->withCount('variants')->get();
+        return response()->json($categories, 200);
     }
 
     /**

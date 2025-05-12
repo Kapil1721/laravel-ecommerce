@@ -11,12 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('inventory_media', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-            $table->unsignedBigInteger('inventory_id')->nullable();
-            $table->unsignedBigInteger('media_id')->nullable();
-            $table->foreign('inventory_id')->references('id')->on('inventory')->onDelete('cascade');
+        Schema::table('inventories', function (Blueprint $table) {
+            // $table->json('variants')->nullable()->after('product_id');
+            $table->unsignedBigInteger('media_id')->nullable()->after('variants');
             $table->foreign('media_id')->references('id')->on('media')->onDelete('cascade');
         });
     }
@@ -26,6 +23,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('inventory_media');
+        Schema::table('inventories', function (Blueprint $table) {
+            $table->dropForeign('media_id');
+            $table->dropColumn(['variants', 'media_id']);
+        });
     }
 };

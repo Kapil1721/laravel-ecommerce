@@ -14,17 +14,17 @@ return new class extends Migration
         Schema::create('inventories', function (Blueprint $table) {
             $table->id();
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
-            $table->string('price')->unique();
-            $table->string('compare_at_price')->unique();
-            $table->string('cost_per_item')->unique();
-            $table->string('profit')->unique();
-            $table->string('margin')->unique();
+            $table->string('price')->nullable();
+            $table->string('compare_at_price')->nullable();
+            $table->string('cost_per_item')->nullable();
+            $table->string('profit')->nullable();
+            $table->string('margin')->nullable();
 
-            $table->string('qty')->unique();
-            $table->string('sku')->unique();
-            $table->string('barcode')->unique();
-            $table->boolean('track_quantity')->unique();
-            $table->boolean('continue_when_oos')->unique();
+            $table->string('qty')->nullable();
+            $table->string('sku')->nullable();
+            $table->string('barcode')->nullable();
+            $table->boolean('track_quantity')->nullable();
+            $table->boolean('continue_when_oos')->nullable();
             $table->timestamps();
         });
     }

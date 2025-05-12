@@ -20,7 +20,7 @@ class ProductController extends Controller
         $page = $request->page ?? 1;
         $limit = $request->limit ?? 100;
         $offset = ($page - 1) * $limit;
-        $products = Product::offset($offset)->limit($limit)->with('category.variants')->get(); 
+        $products = Product::offset($offset)->limit($limit)->with(['category.variants', 'media'])->get();
 
         Log::info($products);
         
@@ -80,34 +80,34 @@ class ProductController extends Controller
        $product->meta_title = $request->meta_title;
        $product->meta_description = $request->meta_description;
        $product->meta_keywords = $request->meta_keywords;
+       $product->slug = $request->slug;
+       $product->status = $request->status;
        $product->product_type = $request->product_type;
       
 
       
        $product->save();
          $product->media()->sync($request->media);
-        if($request->inventory) {
-            foreach ($request->inventory as $req) {
-                $inventory = new Inventory();
-                $inventory->product_id = $product->id;
-                $inventory->price = $req->inventory['price'];
-                $inventory->compare_at_price = $req->inventory['compare_at_price'];
-                $inventory->cost_per_item = $req->inventory['cost_per_item'];
-                $inventory->profit = $req->inventory['profit'];
-                $inventory->margin = $req->inventory['margin'];
-                $inventory->qty = $req->inventory['qty'];
-                $inventory->sku = $req->inventory['sku'];
-                $inventory->barcode = $req->inventory['barcode'];
-                $inventory->track_quantity = $req->inventory['track_quantity'];
-                $inventory->continue_when_oos = $req->inventory['continue_when_oos'];
-                $inventory->save();
-                // if ($request->has('media')) {
-                //     $product->inventory->media()->sync($request->media);
-                // }
-                $inventory->variations()->attach($req->variant_id, ['value' => $req->value]);
-            }
+         if($request->variants) {
+             foreach ($request->variants as $req) {
+                 $req = (object) $req;
+                 $inventory = new Inventory();
+                 $inventory->product_id = $product->id;
+                 $inventory->price = $req->price;
+                 // $inventory->compare_at_price = $req->inventory['compare_at_price'];
+                 // $inventory->cost_per_item = $req->inventory['cost_per_item'];
+                 // $inventory->profit = $req->inventory['profit'];
+                 // $inventory->margin = $req->inventory['margin'];
+                 $inventory->qty = $req->qty;
+                 // $inventory->sku = $req->inventory['sku'];
+                 // $inventory->barcode = $req->inventory['barcode'];
+                 // $inventory->track_quantity = $req->inventory['track_quantity'];
+                 // $inventory->continue_when_oos = $req->inventory['continue_when_oos'];
+                 $inventory->variants = $req->variants;
+                 $inventory->save();
+             }
+         }
 
-        }
 
 
 
@@ -122,7 +122,7 @@ class ProductController extends Controller
      */
     public function show(string $id)
     {
-        $product = Product::find($id);
+        $product = Product::with(['category.variants', 'media', 'inventories'])->find($id);
         return response()->json($product, 200);
     }
 
@@ -178,9 +178,28 @@ class ProductController extends Controller
        $product->slug = $request->slug;
        $product->product_type = $request->product_type;
 
-$product->save();
+        $product->save();
         if ($request->has('media')) {
             $product->media()->sync($request->media);
+        }
+        if($request->variants) {
+            foreach ($request->variants as $req) {
+                $req = (object) $req;
+                $inventory = Inventory::findOrNew($req->id);
+                $inventory->product_id = $product->id;
+                $inventory->price = $req->price;
+                // $inventory->compare_at_price = $req->inventory['compare_at_price'];
+                // $inventory->cost_per_item = $req->inventory['cost_per_item'];
+                // $inventory->profit = $req->inventory['profit'];
+                // $inventory->margin = $req->inventory['margin'];
+                $inventory->qty = $req->qty;
+                // $inventory->sku = $req->inventory['sku'];
+                // $inventory->barcode = $req->inventory['barcode'];
+                // $inventory->track_quantity = $req->inventory['track_quantity'];
+                // $inventory->continue_when_oos = $req->inventory['continue_when_oos'];
+                $inventory->variants = $req->variants;
+                $inventory->save();
+            }
         }
         return response()->json(['message' => 'Product updated successfully'], 201);
     }
