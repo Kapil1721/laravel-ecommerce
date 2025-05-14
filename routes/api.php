@@ -45,6 +45,7 @@ Route::prefix('admin')->as('admin.')->middleware('auth:sanctum')->group(function
     Route::apiResource('inventories', InventoryController::class);
     Route::apiResource('collections', CollectionController::class);
     Route::post('coupons/apply', [CouponController::class, 'apply']);
+    Route::get('conditions',[CollectionController::class, 'conditions']);
    
 
 });

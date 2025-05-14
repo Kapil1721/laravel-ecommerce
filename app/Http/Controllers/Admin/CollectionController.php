@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use App\Models\ColumnCondition;
+use App\Models\Collection;
+use App\Models\Product; 
 
 class CollectionController extends Controller
 {
@@ -89,4 +92,11 @@ public function update(Request $request, Collection $collection)
         Log::info($collection);
         return response()->json(['message' => 'Collection deleted successfully'], 200); 
     }
+
+    public function conditions()
+    {
+        $conditions = ColumnCondition::with('conditions')->get();
+        return response()->json($conditions, 200);
+    }
+
 }
