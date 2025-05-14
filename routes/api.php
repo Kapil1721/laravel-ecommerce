@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\VariantsController;
 use App\Http\Controllers\admin\InventoryController;
+use App\Http\Controllers\Admin\CollectionController;
 
 // Routes that require authentication (Sanctum)
 Route::prefix('admin')->as('admin.')->middleware('guest:sanctum')->group(function () {
@@ -42,10 +43,7 @@ Route::prefix('admin')->as('admin.')->middleware('auth:sanctum')->group(function
     Route::apiResource('media', MediaController::class);
     Route::apiResource('tags', TagController::class);
     Route::apiResource('inventories', InventoryController::class);
-
-
-
-
+    Route::apiResource('collections', CollectionController::class);
     Route::post('coupons/apply', [CouponController::class, 'apply']);
    
 
