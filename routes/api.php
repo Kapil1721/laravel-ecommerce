@@ -18,10 +18,10 @@ use App\Http\Controllers\Admin\CollectionController;
 
 // Routes that require authentication (Sanctum)
 Route::prefix('admin')->as('admin.')->middleware('guest:sanctum')->group(function () {
-    
+
     Route::post('register', [AuthController::class, 'register']);
     Route::post('login', [AuthController::class, 'login']);
-    
+
 });
 
 Route::prefix('admin')->as('admin.')->middleware('auth:sanctum')->group(function () {
@@ -29,11 +29,11 @@ Route::prefix('admin')->as('admin.')->middleware('auth:sanctum')->group(function
         return $request->user();
     });
 
-    Route::get('categories/{id}/variants', [CategoryController::class,'variants'])->name('categories.variants');
+    Route::get('categories/{id}/variants', [CategoryController::class, 'variants'])->name('categories.variants');
 
     Route::apiResource('categories', CategoryController::class);
-    
-    Route::get('products/{id}/inventory', [ProductController::class,'inventory'])->name('products.inventory');
+
+    Route::get('products/{id}/inventory', [ProductController::class, 'inventory'])->name('products.inventory');
     Route::apiResource('products', ProductController::class);
 
     Route::apiResource('blogs', BlogController::class);
@@ -45,9 +45,7 @@ Route::prefix('admin')->as('admin.')->middleware('auth:sanctum')->group(function
     Route::apiResource('inventories', InventoryController::class);
     Route::apiResource('collections', CollectionController::class);
     Route::post('coupons/apply', [CouponController::class, 'apply']);
-    Route::get('conditions',[CollectionController::class, 'conditions']);
-   
-
+    Route::get('conditions', [CollectionController::class, 'conditions']);
 });
 
 // Public Routes
