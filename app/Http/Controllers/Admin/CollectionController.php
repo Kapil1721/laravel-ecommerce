@@ -19,12 +19,13 @@ class CollectionController extends Controller
     public function index()
     {
 
-        $collection = Collection::all();
+        $collection = Collection::with(['media', 'products', 'collection_conditions.column_condition', 'collection_conditions.condition'])->withCount(['products'])->get();
         return response()->json($collection, 200);
     }
 
     public function store(Request $request)
     {
+        \Log::info($request->all());
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -54,11 +55,11 @@ class CollectionController extends Controller
         $collection->status = $request->status;
         $collection->save();
 
-        if ($request->has('products')) {
+        if ($request->has('products') && !empty($request->products)) {
             $collection->products()->sync($request->products);
         }
 
-        if ($request->has('conditions')) {
+        if ($request->has('conditions') && !empty($request->conditions)) {
             foreach ($request->conditions as $item) {
                 $condition = new CollectionCondition();
                 $condition->collection_id = $collection->id;
@@ -67,10 +68,16 @@ class CollectionController extends Controller
                 $condition->value = $item['value'];
                 $condition->save();
             }
+            $collection->syncProducts();
         }
-        $collection->syncProducts();
 
         return response()->json(['message' => 'Collection created successfully'], 200);
+    }
+
+    public function show(string $id)
+    {
+        $collection = Collection::with(['media', 'products', 'collection_conditions.column_condition', 'collection_conditions.condition'])->findOrFail($id);
+        return response()->json($collection, 200);
     }
 
     public function update(Request $request, Collection $collection)
@@ -78,33 +85,64 @@ class CollectionController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'products' => 'nullable|array',
-            'products.*' => 'exists:products,id',
-            'column_conditions' => 'nullable|array',
-            'column_conditions.*' => 'exists:column_conditions,id',
-            'status' => 'required|boolean',
-            'type' => 'nullable|string|max:255',
-            'media_id' => 'nullable|exists:media,id',
-            'meta_title' => 'nullable|string|max:255',
-            'meta_description' => 'nullable|string',
-            'meta_keywords' => 'nullable|string',
+            // 'products' => 'nullable|array',
+            // 'products.*' => 'exists:products,id',
+            // 'column_conditions' => 'nullable|array',
+            // 'column_conditions.*' => 'exists:column_conditions,id',
+            // 'status' => 'required|boolean',
+            // 'type' => 'nullable|string|max:255',
+            // 'media_id' => 'nullable|exists:media,id',
+            // 'meta_title' => 'nullable|string|max:255',
+            // 'meta_description' => 'nullable|string',
+            // 'meta_keywords' => 'nullable|string',
         ]);
 
-        $collection->update($validated);
+        // $collection->update($validated);
 
-        if (isset($validated['products'])) {
-            $collection->products()->sync($validated['products']);
-        } else {
-            $collection->products()->detach();
+        $collection->name = $request->name;
+        $collection->slug = $request->slug ?? Str::slug($request->name);
+        $collection->description = $request->description;
+        $collection->match = $request->match;
+        $collection->media_id = $request->media_id;
+        $collection->meta_title = $request->meta_title;
+        $collection->meta_description = $request->meta_description;
+        $collection->meta_keywords = $request->meta_keywords;
+        $collection->status = $request->status;
+        $collection->save();
+
+        if ($request->has('products') && !empty($request->products)) {
+            $collection->products()->sync($request->products);
+        }
+        if ($request->has('conditions') && !empty($request->conditions)) {
+            $incomingConditions = collect($request->conditions);
+            // Get existing condition IDs for this collection
+            $existingConditions = $collection->collection_conditions()->get();
+            $existingIds = $existingConditions->pluck('id');
+
+            // Track submitted IDs
+            $submittedIds = $incomingConditions->pluck('id')->filter()->values();
+
+            // 1. Delete conditions not in request
+            $idsToDelete = $existingIds->diff($submittedIds);
+            if ($idsToDelete->isNotEmpty()) {
+                CollectionCondition::whereIn('id', $idsToDelete)->delete();
+            }
+
+            // 2. Update or Create
+            foreach ($incomingConditions as $item) {
+                // Update existing condition
+                $condition = CollectionCondition::findOrNew($item['id']);
+                if ($condition && $condition->collection_id === $collection->id) {
+                    $condition->column_condition_id = $item['column'];
+                    $condition->condition_id = $item['condition'];
+                    $condition->value = $item['value'];
+                    $condition->save();
+                }
+            }
+            $collection->syncProducts();
         }
 
-        if (isset($validated['column_conditions'])) {
-            $collection->column_conditions()->sync($validated['column_conditions']);
-        } else {
-            $collection->column_conditions()->detach();
-        }
-
-        return redirect()->route('admin.collections.index')->with('success', 'Collection updated successfully.');
+        return response()->json(['message' => 'Collection updated successfully'], 200);
     }
 
 

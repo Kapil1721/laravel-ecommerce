@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\CustomerController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -46,6 +47,9 @@ Route::prefix('admin')->as('admin.')->middleware('auth:sanctum')->group(function
     Route::apiResource('collections', CollectionController::class);
     Route::post('coupons/apply', [CouponController::class, 'apply']);
     Route::get('conditions', [CollectionController::class, 'conditions']);
+
+    Route::apiResource('customers', CustomerController::class);
+    Route::get('countries', [CustomerController::class, 'countries']);
 });
 
 // Public Routes
