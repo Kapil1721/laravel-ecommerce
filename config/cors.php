@@ -15,11 +15,11 @@ return [
     |
     */
 
-    'paths' => ['api/*', 'sanctum/csrf-cookie'], // This will include API routes
+    'paths' => ['api/*', 'sanctum/csrf-cookie', 'products', 'products/*', '*'], // Include all routes including products
 
     'allowed_methods' => ['*'], // Allow all HTTP methods
 
-    'allowed_origins' => ['http://localhost:3000'], // Allow your front-end domain
+    'allowed_origins' => ['http://127.0.0.1:3000', 'http://localhost:3000'], // Allow your front-end domain
 
     'allowed_origins_patterns' => [], // No pattern matching needed
 

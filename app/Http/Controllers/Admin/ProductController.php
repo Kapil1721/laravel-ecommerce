@@ -71,6 +71,7 @@ class ProductController extends Controller
         $product->sale_price = $request->sale_price;
         $product->actual_price = $request->actual_price;
         $product->track_stock = $request->track_stock;
+        $product->stock = $request->stock;
         $product->continue_when_oos = $request->continue_when_oos;
         $product->if_sku = $request->if_sku;
         $product->sku = $request->sku;
@@ -94,7 +95,7 @@ class ProductController extends Controller
                 $inventory = new Inventory();
                 $inventory->product_id = $product->id;
                 $inventory->price = $req->price;
-                // $inventory->compare_at_price = $req->inventory['compare_at_price'];
+                $inventory->compare_at_price = $req->compare_at_price;
                 // $inventory->cost_per_item = $req->inventory['cost_per_item'];
                 // $inventory->profit = $req->inventory['profit'];
                 // $inventory->margin = $req->inventory['margin'];
@@ -135,7 +136,7 @@ class ProductController extends Controller
      */
     public function update(string $id, Request $request)
     {
-        Log::info($request->all());
+        // Log::info($request->all());
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'category_id' => 'nullable',
@@ -169,6 +170,7 @@ class ProductController extends Controller
         $product->sale_price = $request->sale_price;
         $product->actual_price = $request->actual_price;
         $product->track_stock = $request->track_stock;
+        $product->stock = $request->stock;
         $product->continue_when_oos = $request->continue_when_oos;
         $product->if_sku = $request->if_sku;
         $product->sku = $request->sku;
@@ -192,7 +194,7 @@ class ProductController extends Controller
                 $inventory = Inventory::findOrNew($req->id);
                 $inventory->product_id = $product->id;
                 $inventory->price = $req->price;
-                // $inventory->compare_at_price = $req->inventory['compare_at_price'];
+                $inventory->compare_at_price = $req->compare_at_price;
                 // $inventory->cost_per_item = $req->inventory['cost_per_item'];
                 // $inventory->profit = $req->inventory['profit'];
                 // $inventory->margin = $req->inventory['margin'];

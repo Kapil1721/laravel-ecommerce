@@ -22,6 +22,7 @@ return new class extends Migration
             $table->decimal('sale_price', 10, 2)->nullable();
             $table->decimal('actual_price', 10, 2)->nullable();
             $table->boolean('track_stock')->nullable();
+            $table->string('stock')->nullable();
             $table->boolean('continue_when_oos')->nullable();
             $table->boolean('if_sku')->nullable();
             $table->string('sku')->nullable();

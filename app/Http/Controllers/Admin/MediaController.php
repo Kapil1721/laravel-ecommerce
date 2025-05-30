@@ -29,7 +29,7 @@ class MediaController extends Controller
 
         $validator = Validator::make($request->all(), [
             'file' => 'required',
-            'file.*' => 'file|mimes:jpg,jpeg,png,gif,mp4,avi,svg,tmp|max:10240',
+            // 'file.*' => 'file|mimes:jpg,jpeg,png,gif,mp4,avi,svg,tmp|max:10240',
         ]);
 
         if ($validator->fails()) {
@@ -42,7 +42,7 @@ class MediaController extends Controller
             foreach ($request->file('file') as $uploadedFile) {
                 $filename = time() . '_' . $uploadedFile->getClientOriginalName();
                 $filenameWithoutExt = pathinfo($filename, PATHINFO_FILENAME);
-                $path = $uploadedFile->storeAs('images', $filename);
+                $path = $uploadedFile->storeAs('media', $filename);
 
                 $media = Media::create([
                     'file' => $path,
@@ -50,6 +50,7 @@ class MediaController extends Controller
                     'size' => number_format($uploadedFile->getSize() / 1024, 2),
                     'extension' => $uploadedFile->getClientOriginalExtension(),
                     'alt' => $filenameWithoutExt,
+                    'title' => $filenameWithoutExt,
                 ]);
                 $media->url = asset('uploads/');
 
@@ -87,31 +88,31 @@ class MediaController extends Controller
     public function update(Request $request, string $id)
     {
         Log::info($request->all());
-        $validator = Validator::make($request->all(), [                 
+        $validator = Validator::make($request->all(), [
             'file' => 'required|string|max:255',
-            'path' => 'required|string|max:255',
-            'type' => 'required|string|max:255',
-            'size' => 'required|string|max:255',
-            'extension' => 'required|string|max:255',
-            'alt' => 'required|string|max:255',
+            // 'title' => 'required|string|max:255',
+            // 'type' => 'required|string|max:255',
+            // 'size' => 'required|string|max:255',
+            // 'extension' => 'required|string|max:255',
+            // 'alt' => 'required|string|max:255',
         ]);
         if ($validator->fails()) {
-            return response()->json(['error'=>$validator->errors()], 400);
+            return response()->json(['error' => $validator->errors()], 400);
         }
         // Find the variant by ID
-        $media = Media::find($id);  
+        $media = Media::find($id);
         if (!$media) {
             return response()->json(['message' => 'Media not found'], 404);
-        }                   
+        }
         // Update the variant with the request data
-       
-        $media->file = $request->file; 
-        $media->path = $request->path;
+
+        $media->file = $request->file;
+        $media->title = $request->title;
         $media->type = $request->type;
         $media->size = $request->size;
         $media->extension = $request->extension;
-        $media->alt = $request->alt;           
-        
+        $media->alt = $request->alt;
+
         $media->save();
         return response()->json(['message' => 'Media updated successfully'], 201);
     }
@@ -123,6 +124,6 @@ class MediaController extends Controller
     {
         $media = Media::destroy($id);
         Log::info($media);
-        return response()->json(['message' => 'Media deleted successfully'], 200); 
+        return response()->json(['message' => 'Media deleted successfully'], 200);
     }
 }

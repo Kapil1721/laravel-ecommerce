@@ -37,3 +37,7 @@
 // Route::post('contact-us', [MainController::class, 'enquiry'])->name('enquiry');
 
 // Route::get('categories', [EcommerceController::class, 'categories'])->name('categories');
+
+Route::get('/', function () {
+    return 'Hello World';
+});

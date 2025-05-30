@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\CustomerController;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -16,13 +17,12 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\VariantsController;
 use App\Http\Controllers\admin\InventoryController;
 use App\Http\Controllers\Admin\CollectionController;
+use App\Http\Controllers\AuthController as CustomerAuthController;
 
 // Routes that require authentication (Sanctum)
 Route::prefix('admin')->as('admin.')->middleware('guest:sanctum')->group(function () {
-
     Route::post('register', [AuthController::class, 'register']);
     Route::post('login', [AuthController::class, 'login']);
-
 });
 
 Route::prefix('admin')->as('admin.')->middleware('auth:sanctum')->group(function () {
@@ -53,10 +53,35 @@ Route::prefix('admin')->as('admin.')->middleware('auth:sanctum')->group(function
 });
 
 // Public Routes
+Route::prefix('')->group(function () {
+    Route::post('/login', [CustomerAuthController::class, 'login']);
+    Route::post('/register', [CustomerAuthController::class, 'register']);
 
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/customer', function (Request $request) {
+            return $request->user();
+        });
+
+        Route::post('/logout', [CustomerAuthController::class, 'logout']);
+
+        // Check email verification status
+        Route::get('/email/verification-status', [CustomerAuthController::class, 'verificationStatus']);
+    });
+
+    // Email Verification Routes
+    Route::post('/email/verification-notification', [CustomerAuthController::class, 'resendVerificationEmail'])
+        ->middleware(['auth:sanctum', 'throttle:6,1'])
+        ->name('verification.send');
+
+    Route::get('/email/verify/{id}/{hash}', [CustomerAuthController::class, 'verify'])
+        ->name('verification.verify');
+});
 
 Route::get('index', [MainController::class, 'index'])->name('home');
-Route::get('products', [MainController::class, 'products'])->name('product');
+Route::get('products', [MainController::class, 'products'])->name('products');
+Route::get('products/{slug}', [MainController::class, 'productDetail'])->name('product.detail');
+Route::get('collections', [MainController::class, 'collections'])->name('collections');
+Route::get('collections/{slug}', [MainController::class, 'collectionDetail'])->name('collection.detail');
 Route::get('about', [MainController::class, 'about'])->name('about');
 Route::get('shop', [MainController::class, 'shop'])->name('shop');
 Route::get('blogs', [MainController::class, 'blogs'])->name('blogs');
@@ -65,7 +90,29 @@ Route::get('teams', [MainController::class, 'teams'])->name('teams');
 
 
 Route::get('shop-collection', [MainController::class, 'shopcollection'])->name('shopcollection');
-Route::get('product-inner', [MainController::class, 'productdetail'])->name('product-inner');
 Route::get('my-account', [MainController::class, 'myaccount'])->name('my-account');
 Route::get('products/search/{name}', [ProductController::class, 'search']);
 
+// Test route for email verification
+Route::get('/test-email', function () {
+    try {
+        $user = \App\Models\Customer::first();
+        if (!$user) {
+            return response()->json(['message' => 'No users found to test with'], 404);
+        }
+
+        // Send a test verification email
+        $user->sendEmailVerificationNotification();
+
+        return response()->json([
+            'message' => 'Test verification email sent to ' . $user->email,
+            'user' => $user->email
+        ]);
+    } catch (\Exception $e) {
+        \Log::error('Error sending test email: ' . $e->getMessage());
+        return response()->json([
+            'message' => 'Error sending test email',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+});
