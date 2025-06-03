@@ -70,6 +70,13 @@ class Product extends Model
         return $this->belongsToMany(Collection::class, 'product_collections', 'product_id', 'collection_id');
     }
 
+    public function discounts()
+    {
+        return $this->belongsToMany(Discounts::class, 'discount_products', 'product_id', 'discount_id')->withPivot('inventories');
+    }
+
+    public function getDiscounts()
+    {
+        return $this->belongsToMany(Discounts::class, 'discount_get_products', 'product_id', 'discount_id');
+    }
 }
-
-

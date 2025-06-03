@@ -17,7 +17,9 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\VariantsController;
 use App\Http\Controllers\admin\InventoryController;
 use App\Http\Controllers\Admin\CollectionController;
+use App\Http\Controllers\Admin\DiscountsController;
 use App\Http\Controllers\AuthController as CustomerAuthController;
+use Illuminate\Support\Facades\Log;
 
 // Routes that require authentication (Sanctum)
 Route::prefix('admin')->as('admin.')->middleware('guest:sanctum')->group(function () {
@@ -50,6 +52,7 @@ Route::prefix('admin')->as('admin.')->middleware('auth:sanctum')->group(function
 
     Route::apiResource('customers', CustomerController::class);
     Route::get('countries', [CustomerController::class, 'countries']);
+    Route::apiResource('discounts', DiscountsController::class);
 });
 
 // Public Routes
@@ -109,7 +112,7 @@ Route::get('/test-email', function () {
             'user' => $user->email
         ]);
     } catch (\Exception $e) {
-        \Log::error('Error sending test email: ' . $e->getMessage());
+        Log::error('Error sending test email: ' . $e->getMessage());
         return response()->json([
             'message' => 'Error sending test email',
             'error' => $e->getMessage()

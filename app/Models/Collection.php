@@ -26,6 +26,22 @@ class Collection extends Model
     {
         return $this->belongsTo(Media::class);
     }
+
+
+
+    public function discounts()
+    {
+        return $this->belongsToMany(Discounts::class, 'discount_collections', 'collection_id', 'discount_id');
+    }
+
+    public function getDiscounts()
+    {
+        return $this->belongsToMany(Discounts::class, 'discount_get_collections', 'collection_id', 'discount_id');
+    }
+
+
+
+
     public function syncProducts()
     {
         if ($this->type === 'smart') {
@@ -72,20 +88,29 @@ class Collection extends Model
     }
     private function getSqlOperator($slug, $value)
     {
-        return match ($slug) {
-            'is-equal-to' => ['op' => '=', 'val' => $value],
-            'is-not-equal-to' => ['op' => '!=', 'val' => $value],
-            'starts-with' => ['op' => 'like', 'val' => "{$value}%"],
-            'ends-with' => ['op' => 'like', 'val' => "%{$value}"],
-            'contains' => ['op' => 'like', 'val' => "%{$value}%"],
-            'does-not-contain' => ['op' => 'not like', 'val' => "%{$value}%"],
-            'is-greater-than' => ['op' => '>', 'val' => $value],
-            'is-less-than' => ['op' => '<', 'val' => $value],
-            'is-not-empty' => ['op' => '!=', 'val' => ''],
-            'is-empty' => ['op' => '=', 'val' => ''],
-            default => ['op' => '=', 'val' => $value],
-        };
+        switch ($slug) {
+            case 'is-equal-to':
+                return ['op' => '=', 'val' => $value];
+            case 'is-not-equal-to':
+                return ['op' => '!=', 'val' => $value];
+            case 'starts-with':
+                return ['op' => 'like', 'val' => "{$value}%"];
+            case 'ends-with':
+                return ['op' => 'like', 'val' => "%{$value}"];
+            case 'contains':
+                return ['op' => 'like', 'val' => "%{$value}%"];
+            case 'does-not-contain':
+                return ['op' => 'not like', 'val' => "%{$value}%"];
+            case 'is-greater-than':
+                return ['op' => '>', 'val' => $value];
+            case 'is-less-than':
+                return ['op' => '<', 'val' => $value];
+            case 'is-not-empty':
+                return ['op' => '!=', 'val' => ''];
+            case 'is-empty':
+                return ['op' => '=', 'val' => ''];
+            default:
+                return ['op' => '=', 'val' => $value];
+        }
     }
 }
-
-

@@ -34,4 +34,9 @@ class Customer extends Authenticatable implements MustVerifyEmail
     {
         return $this->belongsTo(Country::class, 'country_id');
     }
+
+    public function discounts()
+    {
+        return $this->belongsToMany(Discounts::class,'discount_customers','customer_id','discount_id');
+    }
 }
