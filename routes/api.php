@@ -18,8 +18,10 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\VariantsController;
 use App\Http\Controllers\admin\InventoryController;
 use App\Http\Controllers\Admin\CollectionController;
+use App\Http\Controllers\Admin\DiscountsController;
 use App\Http\Controllers\Customer\AuthController as CustomerAuthController;
 use App\Http\Controllers\Customer\CustomerController;
+use Illuminate\Support\Facades\Log;
 
 // Routes that require authentication (Sanctum)
 Route::prefix('admin')->as('admin.')->middleware('guest:sanctum')->group(function () {
@@ -51,6 +53,8 @@ Route::prefix('admin')->as('admin.')->middleware('auth:sanctum')->group(function
     Route::get('conditions', [CollectionController::class, 'conditions']);
 
     Route::apiResource('customers', AdminCustomerController::class);
+    Route::get('countries', [AdminCustomerController::class, 'countries']);
+    Route::apiResource('discounts', DiscountsController::class);
 });
 
 // Public Routes
@@ -95,3 +99,27 @@ Route::get('teams', [MainController::class, 'teams'])->name('teams');
 Route::get('shop-collection', [MainController::class, 'shopcollection'])->name('shopcollection');
 Route::get('my-account', [MainController::class, 'myaccount'])->name('my-account');
 Route::get('products/search/{name}', [ProductController::class, 'search']);
+
+// Test route for email verification
+Route::get('/test-email', function () {
+    try {
+        $user = \App\Models\Customer::first();
+        if (!$user) {
+            return response()->json(['message' => 'No users found to test with'], 404);
+        }
+
+        // Send a test verification email
+        $user->sendEmailVerificationNotification();
+
+        return response()->json([
+            'message' => 'Test verification email sent to ' . $user->email,
+            'user' => $user->email
+        ]);
+    } catch (\Exception $e) {
+        Log::error('Error sending test email: ' . $e->getMessage());
+        return response()->json([
+            'message' => 'Error sending test email',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+});

@@ -18,4 +18,9 @@ class Country extends Model
     {
         return $this->hasMany(Zone::class, 'country_id');
     }
+
+    public function discounts()
+    {
+        return $this->belongsToMany(Discounts::class, 'discount_countries', 'country_id', 'discount_id');
+    }
 }
