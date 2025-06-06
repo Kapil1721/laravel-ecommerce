@@ -78,4 +78,9 @@ class Discounts extends Model
     {
         return $this->belongsToMany(Customer::class, 'discount_customers', 'discount_id', 'customer_id');
     }
+
+    public function orders()
+    {
+        return $this->belongsTo(Orders::class, 'discount_id', 'id');
+    }
 }

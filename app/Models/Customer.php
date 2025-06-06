@@ -37,6 +37,11 @@ class Customer extends Authenticatable implements MustVerifyEmail
 
     public function discounts()
     {
-        return $this->belongsToMany(Discounts::class,'discount_customers','customer_id','discount_id');
+        return $this->belongsTo(Discounts::class, 'discount_customers', 'customer_id', 'discount_id');
+    }
+
+    public function orders()
+    {
+        return $this->belongsTo(Orders::class, 'customer_id');
     }
 }

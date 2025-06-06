@@ -1,25 +1,26 @@
 <?php
 
-use App\Http\Controllers\Admin\CustomerController;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
-
 use App\Http\Controllers\CartController;
+
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\MediaController;
+use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\admin\CouponController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\VariantsController;
+use App\Http\Controllers\Admin\DiscountsController;
 use App\Http\Controllers\admin\InventoryController;
 use App\Http\Controllers\Admin\CollectionController;
-use App\Http\Controllers\Admin\DiscountsController;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Http\Controllers\AuthController as CustomerAuthController;
-use Illuminate\Support\Facades\Log;
 
 // Routes that require authentication (Sanctum)
 Route::prefix('admin')->as('admin.')->middleware('guest:sanctum')->group(function () {
@@ -45,6 +46,9 @@ Route::prefix('admin')->as('admin.')->middleware('auth:sanctum')->group(function
 
     Route::apiResource('media', MediaController::class);
     Route::apiResource('tags', TagController::class);
+
+    Route::apiResource('orders', OrderController::class);
+
     Route::apiResource('inventories', InventoryController::class);
     Route::apiResource('collections', CollectionController::class);
     Route::post('coupons/apply', [CouponController::class, 'apply']);

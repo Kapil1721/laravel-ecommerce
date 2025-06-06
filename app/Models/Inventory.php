@@ -8,15 +8,22 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Inventory extends Model
 {
     use HasFactory;
-    protected $fillable = ['id','price','compare_at_price', 'cost_per_item','profit', 'margin', 'product_id', 'margin', 'qty', 'sku', 'barcode', 'track_quantity', 'continue_when_oos', 'variants', 'media_id'];
+    protected $fillable = ['id', 'price', 'compare_at_price', 'cost_per_item', 'profit', 'margin', 'product_id', 'margin', 'qty', 'sku', 'barcode', 'track_quantity', 'continue_when_oos', 'variants', 'media_id'];
     protected $casts = ['variants' => 'array'];
-    public function product() {
+    public function product()
+    {
         return $this->belongsTo(Product::class, 'product_id', 'id');
     }
-    public function media() {
+    public function media()
+    {
         return $this->belongsTo(Media::class, 'media_id', 'id');
     }
-    
+
+    public function orders()
+    {
+        return $this->belongsTo(OrderItems::class, 'inventory_id', 'id');
+    }
+
     // public function variations() {
     //     return $this->belongsToMany(Variant::class, 'inventory_variations', 'inventory_id', 'variant_id')->withPivot('value');
     // }
@@ -45,6 +52,5 @@ class Inventory extends Model
     // }
 
 
-    
-}
 
+}

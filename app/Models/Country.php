@@ -23,4 +23,14 @@ class Country extends Model
     {
         return $this->belongsToMany(Discounts::class, 'discount_countries', 'country_id', 'discount_id');
     }
+
+    public function shipping()
+    {
+        return $this->belongsto(ShippingAddresses::class, 'country_id', 'id');
+    }
+
+    public function billing()
+    {
+        return $this->belongsTo(BillingAddresses::class, 'country_id', 'id');
+    }
 }
