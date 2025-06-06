@@ -1,10 +1,11 @@
 <?php
 
+use App\Http\Controllers\Admin\CustomerController as AdminCustomerController;
+use App\Http\Controllers\Customer\AddressController;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CartController;
-
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\AuthController;
@@ -14,13 +15,13 @@ use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\admin\CouponController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\CategoryController;
-use App\Http\Controllers\Admin\CustomerController;
-use App\Http\Controllers\Admin\VariantsController;
-use App\Http\Controllers\Admin\DiscountsController;
 use App\Http\Controllers\admin\InventoryController;
 use App\Http\Controllers\Admin\CollectionController;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
-use App\Http\Controllers\AuthController as CustomerAuthController;
+use App\Http\Controllers\Admin\DiscountsController;
+use App\Http\Controllers\Admin\VariantsController;
+use App\Http\Controllers\Customer\AuthController as CustomerAuthController;
+use App\Http\Controllers\Customer\CustomerController;
+use Illuminate\Support\Facades\Log;
 
 // Routes that require authentication (Sanctum)
 Route::prefix('admin')->as('admin.')->middleware('guest:sanctum')->group(function () {
@@ -54,8 +55,8 @@ Route::prefix('admin')->as('admin.')->middleware('auth:sanctum')->group(function
     Route::post('coupons/apply', [CouponController::class, 'apply']);
     Route::get('conditions', [CollectionController::class, 'conditions']);
 
-    Route::apiResource('customers', CustomerController::class);
-    Route::get('countries', [CustomerController::class, 'countries']);
+    Route::apiResource('customers', AdminCustomerController::class);
+    Route::get('countries', [AdminCustomerController::class, 'countries']);
     Route::apiResource('discounts', DiscountsController::class);
 });
 
@@ -63,16 +64,17 @@ Route::prefix('admin')->as('admin.')->middleware('auth:sanctum')->group(function
 Route::prefix('')->group(function () {
     Route::post('/login', [CustomerAuthController::class, 'login']);
     Route::post('/register', [CustomerAuthController::class, 'register']);
+    Route::post('/forgot-password', [CustomerAuthController::class, 'forgotPassword']);
+    Route::post('/reset-password', [CustomerAuthController::class, 'resetPassword']);
 
     Route::middleware('auth:sanctum')->group(function () {
-        Route::get('/customer', function (Request $request) {
-            return $request->user();
-        });
-
         Route::post('/logout', [CustomerAuthController::class, 'logout']);
-
-        // Check email verification status
         Route::get('/email/verification-status', [CustomerAuthController::class, 'verificationStatus']);
+        Route::get('/customer', fn(Request $request) => $request->user());
+        Route::put('/customer', [CustomerController::class, 'update']);
+        Route::put('/change-password', [CustomerController::class, 'changePassword']);
+        Route::post('address/default', [AddressController::class, 'setAsDefault']);
+        Route::apiResource('address', AddressController::class);
     });
 
     // Email Verification Routes
@@ -84,6 +86,7 @@ Route::prefix('')->group(function () {
         ->name('verification.verify');
 });
 
+Route::get('admin/countries', [AdminCustomerController::class, 'countries']);
 Route::get('index', [MainController::class, 'index'])->name('home');
 Route::get('products', [MainController::class, 'products'])->name('products');
 Route::get('products/{slug}', [MainController::class, 'productDetail'])->name('product.detail');

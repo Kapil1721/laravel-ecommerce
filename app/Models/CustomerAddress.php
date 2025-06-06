@@ -8,7 +8,7 @@ class CustomerAddress extends Model
 {
     protected $table = 'customer_addresses';
     protected $fillable = ['customer_id', 'country_id', 'fname', 'lname', 'company', 'address_1', 'address_2', 'city', 'zone_id', 'postalcode', 'telcode', 'phone'];
-    protected $appends = ['full_name'];
+    protected $appends = ['full_name', 'default'];
 
     public function getFullNameAttribute()
     {
@@ -28,5 +28,9 @@ class CustomerAddress extends Model
     public function zone()
     {
         return $this->belongsTo(Zone::class, 'zone_id');
+    }
+    public function getDefaultAttribute()
+    {
+        return $this->hasOne(Customer::class, 'address_id', 'id')->exists();
     }
 }

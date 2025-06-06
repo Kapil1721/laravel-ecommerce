@@ -7,11 +7,23 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Auth\Passwords\CanResetPassword;
+use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 
-class Customer extends Authenticatable implements MustVerifyEmail
+class Customer extends Authenticatable implements MustVerifyEmail, CanResetPasswordContract
 {
-    use HasApiTokens, Notifiable;
-    protected $fillable = ['fname', 'lname', 'email', 'password', 'country_id', 'telcode', 'phone', 'status', 'created_at', 'updated_at'];
+    use HasApiTokens, Notifiable, CanResetPassword;
+    /**
+     * Send the password reset notification.
+     *
+     * @param  string  $token
+     * @return void
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new \App\Notifications\CustomerResetPasswordNotification($token));
+    }
+    protected $fillable = ['fname', 'lname', 'email', 'password', 'country_id', 'telcode', 'phone', 'status', 'created_at', 'updated_at', 'address_id'];
 
     protected $hidden = ['password', 'remember_token'];
     protected $appends = ['full_name'];
@@ -29,6 +41,9 @@ class Customer extends Authenticatable implements MustVerifyEmail
     public function addresses()
     {
         return $this->hasMany(CustomerAddress::class, 'customer_id');
+    }
+    public function address() {
+        return $this->belongsTo(CustomerAddress::class, 'address_id') ?? $this->addresses()->first();
     }
     public function country()
     {

@@ -142,7 +142,9 @@ class MainController extends Controller
 
     public function collections(Request $request)
     {
-        $collections = Collection::with(['media', 'products'])->withCount('products')->get();
+        $query = Collection::query();
+        $with = $request->with ? explode(',', $request->with) : [];
+        $collections = $query->with($with)->withCount('products')->get();
         return response()->json($collections, 200);
 
     }
