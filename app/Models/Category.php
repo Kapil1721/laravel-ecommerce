@@ -10,7 +10,7 @@ class Category extends Model
     protected $table = 'categories';
 
 
-    protected $fillable = ['id','name','description','parent_id','status','meta_title','meta_description','meta_keywords','slug','created_at','updated_at'];
+    protected $fillable = ['id', 'name', 'description', 'parent_id', 'status', 'meta_title', 'meta_description', 'meta_keywords', 'slug', 'created_at', 'updated_at'];
 
     public function products() {
         return $this->hasMany(Product::class, 'category_id', 'id');

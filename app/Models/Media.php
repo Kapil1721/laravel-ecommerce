@@ -20,3 +20,6 @@ class Media extends Model
         return asset("uploads/{$this->file}");
     }
 }
+
+
+

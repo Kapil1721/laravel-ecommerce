@@ -18,6 +18,7 @@ class OrderController extends Controller
     {
         $order = Orders::all();
         return response()->json($order, 200);
+        Log::info($order);
     }
 
     /**
