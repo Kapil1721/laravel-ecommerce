@@ -1,0 +1,10 @@
+Git commands to be used
+
+For adding changed files
+git add .
+
+For committing changes to github
+git commit -m "Comment title"
+
+For pushing all changes to github
+git push origin master

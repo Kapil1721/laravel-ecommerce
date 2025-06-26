@@ -1,0 +1,6 @@
+$products = Product::offset($offset)->limit($limit)->with(['category.variants', 'media'])->get(); //ProductController::index
+$product = Product::with(['category.variants', 'media'])->find($id);  //ProductController::show
+$product->slug = $request->slug; //ProductController::store, after meta_keywords
+$product->status = $request->status; //ProductController::store, after slug
+$category = Category::with('variants')->get(); to $categories = Category::with('variants')->withCount('variants')->get(); //CategoryController::index, after Log
+return response()->json($category, 200); to return response()->json($categories, 200); //CategoryController::index, after above line
