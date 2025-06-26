@@ -1,14 +1,11 @@
 <?php
 
 use App\Http\Controllers\Admin\CustomerController as AdminCustomerController;
-use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\CheckoutController;
-use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\Customer\AddressController;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use App\Http\Controllers\DiscountController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\CartController;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\AuthController;
@@ -18,7 +15,6 @@ use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\admin\CouponController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\CategoryController;
-use App\Http\Controllers\Admin\VariantsController;
 use App\Http\Controllers\admin\InventoryController;
 use App\Http\Controllers\Admin\CollectionController;
 use App\Http\Controllers\Admin\DiscountsController as AdminDiscountsController;
@@ -61,6 +57,7 @@ Route::prefix('admin')->as('admin.')->middleware('auth:sanctum')->group(function
 
     Route::apiResource('customers', AdminCustomerController::class);
     Route::get('countries', [AdminCustomerController::class, 'countries']);
+    Route::apiResource('discounts', AdminDiscountsController::class);
 });
 
 // Public Routes
@@ -105,3 +102,5 @@ Route::get('teams', [MainController::class, 'teams'])->name('teams');
 Route::get('shop-collection', [MainController::class, 'shopcollection'])->name('shopcollection');
 Route::get('my-account', [MainController::class, 'myaccount'])->name('my-account');
 Route::get('products/search/{name}', [ProductController::class, 'search']);
+Route::post('discount/apply', [DiscountController::class, 'apply'])->name('discount.apply');
+Route::get('checkout', [CheckoutController::class, 'checkout'])->name('checkout');
