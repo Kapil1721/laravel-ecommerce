@@ -220,4 +220,5 @@ class DiscountsController extends Controller
 
         return response()->json(['message' => 'Discount deleted successfully'], 200);
     }
+
 }

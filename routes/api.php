@@ -1,11 +1,12 @@
 <?php
 
-use App\Models\Product;
+use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\Customer\AddressController;
+use App\Http\Controllers\DiscountController;
 use Illuminate\Http\Request;
 use App\Models\ProductComment;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\CartController;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\AuthController;
@@ -15,11 +16,11 @@ use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\admin\CouponController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\CategoryController;
-use App\Http\Controllers\Admin\VariantsController;
 use App\Http\Controllers\Admin\DiscountsController;
 use App\Http\Controllers\admin\InventoryController;
 use App\Http\Controllers\Admin\CollectionController;
-use App\Http\Controllers\Customer\AddressController;
+use App\Http\Controllers\Admin\DiscountsController as AdminDiscountsController;
+use App\Http\Controllers\Admin\VariantsController;
 use App\Http\Controllers\Customer\CustomerController;
 use App\Http\Controllers\Customer\OtherMediaController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
@@ -61,7 +62,7 @@ Route::prefix('admin')->as('admin.')->middleware('auth:sanctum')->group(function
 
     Route::apiResource('customers', AdminCustomerController::class);
     Route::get('countries', [AdminCustomerController::class, 'countries']);
-    Route::apiResource('discounts', DiscountsController::class);
+    Route::apiResource('discounts', AdminDiscountsController::class);
 });
 
 // Public Routes
@@ -110,27 +111,5 @@ Route::get('teams', [MainController::class, 'teams'])->name('teams');
 Route::get('shop-collection', [MainController::class, 'shopcollection'])->name('shopcollection');
 Route::get('my-account', [MainController::class, 'myaccount'])->name('my-account');
 Route::get('products/search/{name}', [ProductController::class, 'search']);
-
-// Test route for email verification
-Route::get('/test-email', function () {
-    try {
-        $user = \App\Models\Customer::first();
-        if (!$user) {
-            return response()->json(['message' => 'No users found to test with'], 404);
-        }
-
-        // Send a test verification email
-        $user->sendEmailVerificationNotification();
-
-        return response()->json([
-            'message' => 'Test verification email sent to ' . $user->email,
-            'user' => $user->email
-        ]);
-    } catch (\Exception $e) {
-        Log::error('Error sending test email: ' . $e->getMessage());
-        return response()->json([
-            'message' => 'Error sending test email',
-            'error' => $e->getMessage()
-        ], 500);
-    }
-});
+Route::post('discount/apply', [DiscountController::class, 'apply'])->name('discount.apply');
+Route::get('checkout', [CheckoutController::class, 'checkout'])->name('checkout');

@@ -38,6 +38,6 @@
 
 // Route::get('categories', [EcommerceController::class, 'categories'])->name('categories');
 
-// Route::get('/', function () {
-//     return 'Hello World';
-// });
+Route::get('/', function () {
+    return 'Hello World';
+});
