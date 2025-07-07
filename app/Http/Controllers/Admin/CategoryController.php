@@ -27,34 +27,34 @@ class CategoryController extends Controller
     {
         Log::info($request->all());
         $validator = Validator::make($request->all(), [
-            
-            'name'=>'required',
-            'description'=>'required',
-            'status'=>'required',
-            'parent_id'=>'nullable|exists:categories,id',
-            'meta_title'=>'required',
-            'meta_description'=>'required',
-            'meta_keywords'=>'required',
-            'slug'=>'required',
-     
-            'status'=>'required',
-       
+
+            'name' => 'required',
+            'description' => 'required',
+            'status' => 'required',
+            'parent_id' => 'nullable|exists:categories,id',
+            'meta_title' => 'required',
+            'meta_description' => 'required',
+            'meta_keywords' => 'required',
+            'slug' => 'required',
+
+            'status' => 'required',
+
         ]);
-       if ($validator->fails()) {
-           return response()->json(['error'=>$validator->errors()], 400);
-       }
-       $category = new Category();
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 400);
+        }
+        $category = new Category();
 
-       $category->name = $request->name;
-       $category->description = $request->description;
-       $category->status = $request->status;
-       $category->parent_id = $request->parent_id;
-       $category->meta_title = $request->meta_title;
-       $category->meta_description = $request->meta_description;
-       $category->meta_keywords = $request->meta_keywords;
-       $category->slug = $request->slug;
+        $category->name = $request->name;
+        $category->description = $request->description;
+        $category->status = $request->status;
+        $category->parent_id = $request->parent_id;
+        $category->meta_title = $request->meta_title;
+        $category->meta_description = $request->meta_description;
+        $category->meta_keywords = $request->meta_keywords;
+        $category->slug = $request->slug;
 
-       $category->save();
+        $category->save();
         return response()->json(['message' => 'Category created successfully'], 201);
     }
 
@@ -74,50 +74,50 @@ class CategoryController extends Controller
     {
         Log::info($request->all());
         $validator = Validator::make($request->all(), [
-        
-            'name'=>'required',
-            'description'=>'required',
-            'status'=>'required',
-            'parent_id'=>'nullable|exists:categories,id',
-            'meta_title'=>'required',
-            'meta_description'=>'required',
-            'meta_keywords'=>'required',
-            'slug'=>'required',
-            'status'=>'required',
-     
-            
-           
+
+            'name' => 'required',
+            'description' => 'required',
+            'status' => 'required',
+            'parent_id' => 'nullable|exists:categories,id',
+            'meta_title' => 'required',
+            'meta_description' => 'required',
+            'meta_keywords' => 'required',
+            'slug' => 'required',
+            'status' => 'required',
+
+
+
         ]);
-       if ($validator->fails()) {
-           return response()->json(['error'=>$validator->errors()], 400);
-       }
-       $category = Category::findOrFail($id);
-       
-       $category->name = $request->name;
-       $category->description = $request->description;
-       $category->status = $request->status;
-         $category->parent_id = $request->parent_id;
-         $category->meta_title = $request->meta_title;
-            $category->meta_description = $request->meta_description;
-            $category->meta_keywords = $request->meta_keywords;
-            $category->slug = $request->slug;
-            $category->status = $request->status;
-     
-          
-       $category->save();
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 400);
+        }
+        $category = Category::findOrFail($id);
+
+        $category->name = $request->name;
+        $category->description = $request->description;
+        $category->status = $request->status;
+        $category->parent_id = $request->parent_id;
+        $category->meta_title = $request->meta_title;
+        $category->meta_description = $request->meta_description;
+        $category->meta_keywords = $request->meta_keywords;
+        $category->slug = $request->slug;
+        $category->status = $request->status;
+
+
+        $category->save();
         return response()->json(['message' => 'Category updated successfully'], 201);
-      }
+    }
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
-    
+
     {
 
         Category::destroy($id);
         return response()->json(['message' => 'Category deleted successfully'], 200);
-      }
+    }
 
     public function variants($id)
     {
@@ -129,6 +129,4 @@ class CategoryController extends Controller
         }
         return response()->json($category->variants, 200);
     }
-       
-         
 }

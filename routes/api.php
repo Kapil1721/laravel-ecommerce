@@ -1,9 +1,9 @@
 <?php
 
-use App\Http\Controllers\Admin\CustomerController as AdminCustomerController;
-use App\Http\Controllers\Customer\AddressController;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use App\Models\Product;
 use Illuminate\Http\Request;
+use App\Models\ProductComment;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\MainController;
@@ -15,13 +15,17 @@ use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\admin\CouponController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\VariantsController;
+use App\Http\Controllers\Admin\DiscountsController;
 use App\Http\Controllers\admin\InventoryController;
 use App\Http\Controllers\Admin\CollectionController;
-use App\Http\Controllers\Admin\DiscountsController;
-use App\Http\Controllers\Admin\VariantsController;
-use App\Http\Controllers\Customer\AuthController as CustomerAuthController;
+use App\Http\Controllers\Customer\AddressController;
 use App\Http\Controllers\Customer\CustomerController;
-use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Customer\OtherMediaController;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use App\Http\Controllers\Customer\ProductCommentController;
+use App\Http\Controllers\Customer\AuthController as CustomerAuthController;
+use App\Http\Controllers\Admin\CustomerController as AdminCustomerController;
 
 // Routes that require authentication (Sanctum)
 Route::prefix('admin')->as('admin.')->middleware('guest:sanctum')->group(function () {
@@ -75,6 +79,10 @@ Route::prefix('')->group(function () {
         Route::put('/change-password', [CustomerController::class, 'changePassword']);
         Route::post('address/default', [AddressController::class, 'setAsDefault']);
         Route::apiResource('address', AddressController::class);
+        Route::get('countries', [CustomerController::class, 'countries']);
+
+        Route::apiResource('othermedia', OtherMediaController::class);
+        Route::apiResource('productcomments', ProductCommentController::class);
     });
 
     // Email Verification Routes

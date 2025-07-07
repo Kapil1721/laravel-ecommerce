@@ -93,10 +93,7 @@ class InventoryController extends Controller
         return response()->json([
             'message' => 'Inventory updated successfully',
             'inventory' => $inventory,
-        ], 200);    
-
-
-        
+        ], 200);
     }
 
     /**

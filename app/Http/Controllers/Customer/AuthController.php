@@ -2,19 +2,20 @@
 
 namespace App\Http\Controllers\Customer;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use App\Models\Customer;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Password;
 
 class AuthController extends Controller
 {
     public function login(Request $request)
     {
-        \Log::info('Login attempt', $request->all());
+        Log::info('Login attempt', $request->all());
         $request->validate([
             'email' => 'required|email',
             'password' => 'required'
@@ -105,8 +106,8 @@ class AuthController extends Controller
         $queryString = http_build_query($queryParams);
 
         return redirect(
-            env('FRONTEND_URL', 'http://127.0.0.1:3000') . 
-            "/account/verify-email/{$id}/{$hash}" . 
+            env('FRONTEND_URL', 'http://127.0.0.1:3000') .
+            "/account/verify-email/{$id}/{$hash}" .
             ($queryString ? "?{$queryString}" : '')
         );
     }*/
@@ -118,7 +119,7 @@ class AuthController extends Controller
             // Check if verification link is valid
             if (!hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {
                 return redirect(
-                    env('FRONTEND_URL', 'http://127.0.0.1:3000') . 
+                    env('FRONTEND_URL', 'http://127.0.0.1:3000') .
                     "/account/verify-email/error?message=" . urlencode('Invalid verification link')
                 );
             }
@@ -126,7 +127,7 @@ class AuthController extends Controller
             // Check if email is already verified
             if ($user->hasVerifiedEmail()) {
                 return redirect(
-                    env('FRONTEND_URL', 'http://127.0.0.1:3000') . 
+                    env('FRONTEND_URL', 'http://127.0.0.1:3000') .
                     "/account/verify-email?message=" . urlencode('Email already verified')
                 );
             }
@@ -134,25 +135,25 @@ class AuthController extends Controller
             // Mark email as verified and store timestamp
             if ($user->markEmailAsVerified()) {
                 event(new \Illuminate\Auth\Events\Verified($user));
-                
+
                 // Update email_verified_at timestamp
                 $user->email_verified_at = now();
                 $user->save();
 
                 return redirect(
-                    env('FRONTEND_URL', 'http://127.0.0.1:3000') . 
+                    env('FRONTEND_URL', 'http://127.0.0.1:3000') .
                     "/account/verify-email?message=" . urlencode('Email has been verified successfully')
                 );
             }
 
             return redirect(
-                env('FRONTEND_URL', 'http://127.0.0.1:3000') . 
+                env('FRONTEND_URL', 'http://127.0.0.1:3000') .
                 "/account/verify-email?message=" . urlencode('Verification failed')
             );
 
         } catch (\Exception $e) {
             return redirect(
-                env('FRONTEND_URL', 'http://127.0.0.1:3000') . 
+                env('FRONTEND_URL', 'http://127.0.0.1:3000') .
                 "/account/verify-email?message=" . urlencode('Verification failed: ' . $e->getMessage())
             );
         }

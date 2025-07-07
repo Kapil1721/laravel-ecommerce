@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Customer;
 
-use App\Http\Controllers\Controller;
-use App\Models\CustomerAddress;
 use Illuminate\Http\Request;
+use App\Models\CustomerAddress;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
 
 class AddressController extends Controller
 {
@@ -26,9 +27,9 @@ class AddressController extends Controller
      */
     public function store(Request $request)
     {
-        \Log::info($request->all());
+        Log::info($request->all());
         $request->validate([
-            // 
+            //
         ]);
         $customer = $request->user();
         if (!$customer) {
@@ -48,7 +49,7 @@ class AddressController extends Controller
         $address->telcode = $request->telcode;
         $address->phone = $request->phone;
         $address->save();
-        if($request->has('default') && $request->default == 1) {
+        if ($request->has('default') && $request->default == 1) {
             $customer->address_id = $address->id;
             $customer->save();
         }
@@ -89,7 +90,7 @@ class AddressController extends Controller
         $address->telcode = $request->telcode;
         $address->phone = $request->phone;
         $address->save();
-        if($request->has('default') && $request->default == 1) {
+        if ($request->has('default') && $request->default == 1) {
             $customer->address_id = $address->id;
             $customer->save();
         } else {
