@@ -13,10 +13,12 @@ return new class extends Migration
     {
         Schema::create('order_items', function (Blueprint $table) {
             $table->id();
-
-            $table->foreignId('order_id')->constrained()->onDelete('cascade');
-            $table->foreignId('product_id')->constrained()->onDelete('cascade');
-            $table->foreignId('inventory_id')->contrained()->onDelete('cascade');
+            $table->unsignedBigInteger('order_id')->nullable();
+            $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
+            $table->unsignedBigInteger('product_id')->nullable();
+            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
+            $table->unsignedBigInteger('inventory_id')->nullable();
+            $table->foreign('inventory_id')->references('id')->on('inventories')->onDelete('cascade');
             $table->decimal('price', 10, 2)->nullable();
             $table->integer('qty')->nullable();
             $table->decimal('sub_total', 10, 2)->nullable();

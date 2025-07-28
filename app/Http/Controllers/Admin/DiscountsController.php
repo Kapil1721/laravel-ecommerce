@@ -44,19 +44,20 @@ class DiscountsController extends Controller
         $discount->requirement = $request->requirement;
         $discount->min_amount = $request->min_amount;
         $discount->min_qty = $request->min_qty;
+        $discount->buys = $request->buys;
         $discount->gets_qty = $request->gets_qty;
         $discount->gets_applies_to = $request->gets_applies_to;
         $discount->discounted_value_type = $request->discounted_value_type;
         $discount->eligible_countries = $request->eligible_countries;
         $discount->exclude_shipping_over_an_amount = $request->exclude_shipping_over_an_amount;
         $discount->shipping_amount = $request->shipping_amount;
+        $discount->eligible_customers = $request->eligible_customers;
         $discount->total_usage  = $request->total_usage;
         $discount->once_per_customer = $request->once_per_customer;
         $discount->start_date = $request->start_date;
         $discount->end_date = $request->end_date;
         $discount->start_time = $request->start_time;
         $discount->end_time = $request->end_time;
-
 
         $discount->save();
 
@@ -141,7 +142,7 @@ class DiscountsController extends Controller
         }
 
         $discount->type = $request->type;
-        $discount->method = $request->method;
+        $discount->method = $request->method_type;
         $discount->code = $request->code;
         $discount->title = $request->title;
         $discount->discount_type = $request->discount_type;

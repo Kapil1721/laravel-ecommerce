@@ -26,7 +26,6 @@ class Orders extends Model
 
     public function customer()
     {
-
         return $this->hasMany(Customer::class, 'customer_id', 'id');
     }
 
@@ -36,15 +35,15 @@ class Orders extends Model
     }
     public function order_items()
     {
-        return $this->belongsTomany(OrderItems::class, 'order_id', 'id');
+        return $this->hasMany(OrderItems::class, 'order_id', 'id');
     }
-    public function shipping_addresses()
+    public function shipping_address()
     {
-        return $this->belongsToMany(ShippingAddresses::class, 'order_id', 'id');
+        return $this->hasOne(ShippingAddresses::class, 'order_id', 'id');
     }
 
-    public function billing_addresses()
+    public function billing_address()
     {
-        return $this->belongsTo(BillingAddresses::class, 'order_id', 'id');
+        return $this->hasOne(BillingAddresses::class, 'order_id', 'id');
     }
 }

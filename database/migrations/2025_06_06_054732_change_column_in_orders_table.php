@@ -13,10 +13,7 @@ return new class extends Migration
     {
         Schema::table('orders', function (Blueprint $table) {
 
-
-            // $table->dropForeign(['discount_id']);
-            // $table->dropColumn('discount_id');
-            $table->unsignedBigInteger('discount_id')->nullable()->after('total_amount');
+            $table->unsignedBigInteger('discount_id')->nullable()->after('discount_amount');
             $table->foreign('discount_id')->references('id')->on('discounts')->onDelete('set null');
         });
     }

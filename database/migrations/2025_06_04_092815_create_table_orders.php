@@ -13,17 +13,17 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('customer_id')->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('customer_id')->nullable();
+            $table->foreign('customer_id')->on('customers')->references('id')->onDelete('set null');
             $table->decimal('sub_total', 10, 2)->nullable();
-            $table->discount_id();
             $table->decimal('discount_amount', 10, 2)->nullable();
             $table->decimal('grand_total', 10, 2)->nullable();
             $table->enum('payment_method', ['cod', 'card', 'paypal'])->default('cod');
             $table->string('transaction_id')->nullable();
-            $table->boolean('is_paid')->default('false');
+            $table->boolean('is_paid')->default(false);
             $table->enum('status', ['accepted', 'pending', 'cancelled'])->default('accepted');
             $table->enum('shipping_status', ['pending', 'shipped', 'in_transit', 'delivered'])->default('delivered');
-            $table->date('estimated_delivery');
+            $table->date('estimated_delivery')->nullable();
             $table->enum('address', ['same', 'different'])->default('same');
             $table->timestamp('delivered_at')->nullable();
             $table->timestamps();

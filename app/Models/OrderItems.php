@@ -8,17 +8,17 @@ class OrderItems extends Model
 {
     protected $fillable = ['id', 'order_id', 'product_id', 'inventory_id', 'price', 'qty', 'sub_total', 'created_at', 'updated_at'];
 
-    public function orders()
+    public function order()
     {
-        return $this->hasMany(Orders::class, 'order_id', 'id');
+        return $this->belongsTo(Orders::class, 'order_id', 'id');
     }
-    public function products()
+    public function product()
     {
-        return $this->hasMany(Product::class, 'product_id', 'id');
+        return $this->belongsTo(Product::class, 'product_id', 'id');
     }
 
-    public function inventories()
+    public function inventory()
     {
-        return $this->hasMany(Inventory::class, 'inventory_id', 'id');
+        return $this->belongsTo(Inventory::class, 'inventory_id', 'id');
     }
 }

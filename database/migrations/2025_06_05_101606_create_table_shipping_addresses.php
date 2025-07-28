@@ -19,11 +19,15 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->string('telcode')->nullable();
 
-            $table->foreignId('country_id')->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('country_id')->nullable();
+            $table->foreign('country_id')->references('id')->on('countries')->onDelete('cascade');
             $table->string('city')->nullable();
-            $table->foreignId('zone_id')->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('zone_id')->nullable();
+            $table->foreign('zone_id')->references('id')->on('zones')->onDelete('cascade');
 
             $table->string('postal_code')->nullable();
+            $table->string('address_1')->nullable();
+            $table->string('address_2')->nullable();
             $table->timestamps();
         });
     }

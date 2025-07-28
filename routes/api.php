@@ -21,7 +21,6 @@ use App\Http\Controllers\Admin\DiscountsController as AdminDiscountsController;
 use App\Http\Controllers\Admin\VariantsController;
 use App\Http\Controllers\Customer\AuthController as CustomerAuthController;
 use App\Http\Controllers\Customer\CustomerController;
-use Illuminate\Support\Facades\Log;
 
 // Routes that require authentication (Sanctum)
 Route::prefix('admin')->as('admin.')->middleware('guest:sanctum')->group(function () {
@@ -30,9 +29,7 @@ Route::prefix('admin')->as('admin.')->middleware('guest:sanctum')->group(functio
 });
 
 Route::prefix('admin')->as('admin.')->middleware('auth:sanctum')->group(function () {
-    Route::get('/user', function (Request $request) {
-        return $request->user();
-    });
+    Route::get('/user', fn(Request $request) => $request->user());
 
     Route::get('categories/{id}/variants', [CategoryController::class, 'variants'])->name('categories.variants');
 
@@ -75,6 +72,8 @@ Route::prefix('')->group(function () {
         Route::put('/change-password', [CustomerController::class, 'changePassword']);
         Route::post('address/default', [AddressController::class, 'setAsDefault']);
         Route::apiResource('address', AddressController::class);
+        Route::get('/orders', [CustomerController::class, 'orders']);
+        Route::get('/orders/{id}', [CustomerController::class, 'order']);
     });
 
     // Email Verification Routes
@@ -103,4 +102,5 @@ Route::get('shop-collection', [MainController::class, 'shopcollection'])->name('
 Route::get('my-account', [MainController::class, 'myaccount'])->name('my-account');
 Route::get('products/search/{name}', [ProductController::class, 'search']);
 Route::post('discount/apply', [DiscountController::class, 'apply'])->name('discount.apply');
-Route::get('checkout', [CheckoutController::class, 'checkout'])->name('checkout');
+Route::get('discount/{id}', [DiscountController::class, 'show'])->name('discounts.show');
+Route::post('checkout', [CheckoutController::class, 'checkout'])->name('checkout');

@@ -21,17 +21,23 @@ class BillingAddresses extends Model
         'address_1',
         'address_2'
     ];
+    protected $appends = ['full_name'];
 
-    public function orders()
+    public function getFullNameAttribute()
     {
-        return $this->hasMany(Orders::class, 'order_id', 'id');
+        return "{$this->fname} {$this->lname}";
     }
-    public function countries()
+
+    public function order()
     {
-        return $this->hasMany(Country::class, 'country_id', 'id');
+        return $this->belongsTo(Orders::class, 'order_id', 'id');
     }
-    public function zones()
+    public function country()
     {
-        return $this->hasMany(Zone::class, 'zone_id', 'id');
+        return $this->belongsTo(Country::class, 'country_id', 'id');
+    }
+    public function zone()
+    {
+        return $this->belongsTo(Zone::class, 'zone_id', 'id');
     }
 }

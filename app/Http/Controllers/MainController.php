@@ -44,9 +44,9 @@ class MainController extends Controller
 
         $with = $request->with ? explode(',', $request->with) : [];
         $count = $request->count ? explode(',', $request->count) : [];
-        
+
         $product = Product::offset($offset)->limit($limit);
-        
+
         if($request->filled('ids')) {
             $ids = $request->ids ? explode(',', $request->ids) : [];
             $product = $product->whereIn('id', $ids);
@@ -58,9 +58,9 @@ class MainController extends Controller
                 $query->whereIn('id', $inventoryIds);
             }]);
         }
-        
 
-        $p = $this->getMaxMinPrice($product);
+
+        $p = getMaxMinPrice($product);
         $maxPrice = $p['max'];
         $minPrice = $p['min'];
 
@@ -91,14 +91,14 @@ class MainController extends Controller
         }
 
 
-        $product = $this->applyFilters($product, $request);
+        $product = applyFilters($product, $request);
         $product = $product->get();
 
         return $product->isNotEmpty()
             ? response()->json(['products' => $product, 'max' => $maxPrice, 'min' => $minPrice], 200)
             : response()->json(['message' => 'Product not found'], 404);
     }
-    public function productdetail(Request $request, string $slug)
+    public function productdetail(Request $request, string $slug): \Illuminate\Http\JsonResponse
     {
         $product = Product::where('slug', $slug);
 
@@ -132,7 +132,7 @@ class MainController extends Controller
         }
 
         $product = $product->first();
-        
+
         if (!$product) {
             return response()->json(['message' => 'Product not found'], 404);
         }
@@ -140,7 +140,7 @@ class MainController extends Controller
         return response()->json($product, 200);
     }
 
-    public function collections(Request $request)
+    public function collections(Request $request): \Illuminate\Http\JsonResponse
     {
         $query = Collection::query();
         $with = $request->with ? explode(',', $request->with) : [];
@@ -148,16 +148,16 @@ class MainController extends Controller
         return response()->json($collections, 200);
 
     }
-    public function collectionDetail(Request $request, string $slug)
+    public function collectionDetail(Request $request, string $slug): \Illuminate\Http\JsonResponse
     {
         // 1. Find the collection with optional relationships
         $collection = Collection::where('slug', $slug)->first();
         if (!$collection)
             return response()->json(['message' => 'Collection not found'], 404);
 
-        // 2. Build product query from the collection relationship
+        // 2. Build a product query from the collection relationship
         $productQuery = $collection->products(); // assumes hasMany or belongsToMany
-        $p = $this->getMaxMinPrice($productQuery);
+        $p = getMaxMinPrice($productQuery);
         $maxPrice = $p['max'];
         $minPrice = $p['min'];
 
@@ -183,7 +183,7 @@ class MainController extends Controller
         }
 
         // 4. Filtering
-        $productQuery = $this->applyFilters($productQuery, $request);
+        $productQuery = applyFilters($productQuery, $request);
 
         // 5. Pagination
         $limit = $request->input('limit', 100);
@@ -344,80 +344,5 @@ class MainController extends Controller
             'meta_keywords' => $blog->keywords
         ];
         return view('blog_inner', compact('data', 'meta', 'content', 'blog', 'blogs'));
-    }
-    private function applyFilters($query, $request)
-    {
-
-        // Filter by category slugs
-        if ($request->filled('categories')) {
-            $categorySlugs = explode(',', $request->categories);
-            $query->whereHas('category', fn($q) => $q->whereIn('slug', $categorySlugs));
-        }
-
-        // Filter by price range (either on sale_price or inventory price)
-        if ($request->filled('min') && $request->filled('max')) {
-            $min = (float) $request->min;
-            $max = (float) $request->max;
-
-            $query->where(function ($q) use ($min, $max) {
-                $q->whereBetween('sale_price', [$min, $max])
-                    ->orWhereHas('inventories', fn($q2) => $q2->whereBetween('price', [$min, $max]));
-            });
-        }
-
-        // Filter by stock availability
-        if ($request->stock === 'in-stock') {
-            $query->whereHas('inventories', fn($q) => $q->where('qty', '>', 0));
-        } elseif ($request->stock === 'out-of-stock') {
-            $query->whereDoesntHave('inventories', fn($q) => $q->where('qty', '>', 0));
-        }
-
-        $reserved = ['ids', 'inventories', 'with', 'offset', 'categories', 'min', 'max', 'stock', 'limit', 'page'];
-
-        foreach ($request->except($reserved) as $key => $value) {
-            if ($request->filled($key)) {
-                $values = explode(',', $value);
-                $query->whereHas('inventories', function ($subQuery) use ($key, $values) {
-                    $subQuery->where(function ($q) use ($key, $values) {
-                        foreach ($values as $k => $val) {
-                            $queryMethod = $k === 0 ? 'where' : 'orWhere';
-                            $q->$queryMethod(function ($innerQ) use ($key, $val) {
-                                if($key === "Size") {
-                                    $innerQ->whereJsonContains('variants', ['type' => $key, 'value' => $val]);
-                                }
-                                else {
-                                    $innerQ->whereJsonContains('variants', ['type' => $key, 'name' => $val]);
-                                }
-                            });
-                        }
-                    });
-                });
-            }
-        }
-
-        return $query;
-    }
-
-    private function getMaxMinPrice($query = null)
-    {
-        // Clone the filtered query for price calculations
-        $salePriceMax = $query->clone()->max('sale_price');
-        $salePriceMin = $query->clone()->min('sale_price');
-
-        // Get filtered product IDs to filter inventories
-        $productIds = $query->clone()->pluck('products.id');
-
-        // Now get inventory prices only for these products
-        $inventoryPriceMax = Inventory::whereIn('product_id', $productIds)->max('price');
-        $inventoryPriceMin = Inventory::whereIn('product_id', $productIds)->min('price');
-
-        // Final max and min price
-        $maxPrice = max($salePriceMax, $inventoryPriceMax);
-        $minPrice = min($salePriceMin, $inventoryPriceMin);
-
-        return [
-            'max' => (int) $maxPrice ?? 0,
-            'min' => (int) $minPrice ?? 0,
-        ];
     }
 }

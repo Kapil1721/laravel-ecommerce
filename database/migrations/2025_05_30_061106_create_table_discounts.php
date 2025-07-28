@@ -13,34 +13,34 @@ return new class extends Migration
     {
         Schema::create('discounts', function (Blueprint $table) {
             $table->id();
-            $table->enum('type', ['amount-off-product', 'amount-off-order', 'buy-x-get-y', 'free-shipping'])->default('amount-off-product');
-            $table->enum('method', ['code', 'automatic'])->default('code');
+            $table->enum('type', ['amount-off-product', 'amount-off-order', 'buy-x-get-y', 'free-shipping'])->default('amount-off-product')->nullable();
+            $table->enum('method', ['code', 'automatic'])->default('code')->nullable();
             $table->string('code')->nullable();
             $table->string('title')->nullable();
-            $table->enum('discount_type', ['fixed', 'percentage', 'free'])->default('fixed');
+            $table->enum('discount_type', ['fixed', 'percentage', 'free'])->default('fixed')->nullable();
             $table->decimal('amount', 10, 2)->nullable();
-            $table->enum('applies_to', ['collections', 'products'])->default('products');
-          
-            $table->enum('requirement', ['no_minimum_requirements', 'minimum_purchase_amount', 'minimum_quantity_items'])->default('no_minimum_requirements');
+            $table->enum('applies_to', ['collections', 'products'])->default('products')->nullable();
+
+            $table->enum('requirement', ['no_minimum_requirements', 'minimum_purchase_amount', 'minimum_quantity_items'])->nullable()->default('no_minimum_requirements');
             $table->decimal('min_amount', 10, 2)->nullable();
             $table->integer('min_qty')->nullable();
-            $table->enum('buys', ['minimum_quantity_items', 'minimum_purchase_amount'])->default('minimum_quantity_items');
+            $table->enum('buys', ['minimum_quantity_items', 'minimum_purchase_amount'])->default('minimum_quantity_items')->nullable();
             $table->integer('gets_qty')->nullable();
             $table->enum('gets_applies_to', ['collections', 'products'])->default('products');
             $table->enum('discounted_value_type',['fixed', 'percentage', 'free'])->default('fixed');
 
-         
-       
-            $table->enum('eligible_countries', ['all', 'specific'])->default('all');
-            $table->enum('eligible_customers', ['all', 'specific'])->default('all');
 
-       
-            $table->boolean('exclude_shipping_over_an_amount')->default(false);
+
+            $table->enum('eligible_countries', ['all', 'specific'])->default('all')->nullable();
+            $table->enum('eligible_customers', ['all', 'specific'])->default('all')->nullable();
+
+
+            $table->boolean('exclude_shipping_over_an_amount')->default(false)->nullable();
             $table->decimal('shipping_amount', 10, 2)->nullable();
-   
+
             $table->integer('total_usage')->nullable();
             $table->boolean('once_per_customer')->nullable()->default(false);
-          
+
             $table->boolean('active')->nullable();
             $table->date('start_date')->nullable();
             $table->time('start_time')->nullable();
@@ -50,19 +50,19 @@ return new class extends Migration
         });
 
         Schema::create('discount_collections', function (Blueprint $table) {
-         
+
             $table->unsignedBigInteger('discount_id')->nullable();
-            $table->foreign('discount_id')->references('id')->on('discounts')->onDelete('cascade'); 
+            $table->foreign('discount_id')->references('id')->on('discounts')->onDelete('cascade');
             $table->unsignedBigInteger('collection_id')->nullable();
-            $table->foreign('collection_id')->references('id')->on('collections')->onDelete('cascade'); 
+            $table->foreign('collection_id')->references('id')->on('collections')->onDelete('cascade');
         });
 
         Schema::create('discount_products', function (Blueprint $table) {
             $table->unsignedBigInteger('discount_id')->nullable();
-            $table->foreign('discount_id')->references('id')->on('discounts')->onDelete('cascade'); 
-            
+            $table->foreign('discount_id')->references('id')->on('discounts')->onDelete('cascade');
+
             $table->unsignedBigInteger('product_id')->nullable();
-            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade'); 
+            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
             $table->json('inventories')->nullable();
 
         });
@@ -91,10 +91,10 @@ return new class extends Migration
 
 
 
-        });    
+        });
 
         Schema::create('discount_customers',function(Blueprint $table){
-            
+
             $table->unsignedBigInteger('discount_id')->nullable();
             $table->foreign('discount_id')->references('id')->on('discounts')->onDelete('cascade');
             $table->unsignedBigInteger('customer_id')->nullable();
