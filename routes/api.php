@@ -5,6 +5,8 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\Customer\AddressController;
 use App\Http\Controllers\DiscountController;
 use Illuminate\Http\Request;
+use App\Models\ProductComment;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\Admin\TagController;
@@ -15,12 +17,15 @@ use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\admin\CouponController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\DiscountsController;
 use App\Http\Controllers\admin\InventoryController;
 use App\Http\Controllers\Admin\CollectionController;
 use App\Http\Controllers\Admin\DiscountsController as AdminDiscountsController;
 use App\Http\Controllers\Admin\VariantsController;
 use App\Http\Controllers\Customer\AuthController as CustomerAuthController;
-use App\Http\Controllers\Customer\CustomerController;
+use App\Http\Controllers\Customer\OtherMediaController;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use App\Http\Controllers\Customer\ProductCommentController;
 
 // Routes that require authentication (Sanctum)
 Route::prefix('admin')->as('admin.')->middleware('guest:sanctum')->group(function () {
@@ -74,6 +79,10 @@ Route::prefix('')->group(function () {
         Route::apiResource('address', AddressController::class);
         Route::get('/orders', [CustomerController::class, 'orders']);
         Route::get('/orders/{id}', [CustomerController::class, 'order']);
+        Route::get('countries', [CustomerController::class, 'countries']);
+
+        Route::apiResource('othermedia', OtherMediaController::class);
+        Route::apiResource('productcomments', ProductCommentController::class);
     });
 
     // Email Verification Routes

@@ -2,17 +2,19 @@
 
 namespace App\Http\Controllers\Customer;
 
-use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use App\Models\Orders;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class CustomerController extends Controller
 {
-    public function update(Request $request) {
-        \Log::info($request->user());
+    public function update(Request $request)
+    {
+        Log::info($request->user());
         $request->validate([
             'fname' => 'required|string|max:255',
             'lname' => 'required|string|max:255',
@@ -21,7 +23,7 @@ class CustomerController extends Controller
         ]);
         // Get authenticated customer via Sanctum
         $customer = $request->user();
-        if(!$customer) {
+        if (!$customer) {
             return response()->json(['message' => 'Customer not found'], 404);
         }
         $customer->fname = $request->fname;
@@ -33,17 +35,18 @@ class CustomerController extends Controller
         return response()->json(['message' => 'Customer updated successfully', 'customer' => $customer], 200);
     }
 
-    public function changePassword(Request $request) {
+    public function changePassword(Request $request)
+    {
         $request->validate([
             'current_password' => 'required',
             'password' => 'required|min:8|confirmed',
         ]);
         // Get authenticated customer via Sanctum
         $customer = $request->user();
-        if(!$customer) {
+        if (!$customer) {
             return response()->json(['message' => 'Customer not found'], 401);
         }
-        if(!Hash::check($request->current_password, $customer->password)) {
+        if (!Hash::check($request->current_password, $customer->password)) {
             return response()->json(['message' => 'Current password is incorrect'], 404);
         }
         $customer->password = Hash::make($request->password);

@@ -22,7 +22,7 @@ return new class extends Migration
             $table->integer('rating')->nullable();
             $table->string('name')->nullable();
             $table->string('email')->nullable();
-            $table->enum('status',['active','draft'])->default('active');
+            $table->enum('status', ['pending', 'approved', 'rejected', 'spam'])->default('pending');
             $table->timestamps();
         });
     }

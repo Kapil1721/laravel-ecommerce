@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ProductComment extends Model
@@ -19,9 +20,9 @@ class ProductComment extends Model
         'status'
     ];
 
-    public function media(): HasMany
+    public function media(): BelongsToMany
     {
-        return $this->hasMany(CommentMedia::class, 'comment_id');
+        return $this->belongsToMany(OtherMedia::class, 'comment_media', 'comment_id', 'media_id');
     }
 
     public function product(): BelongsTo
@@ -32,5 +33,13 @@ class ProductComment extends Model
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class);
+    }
+    public function flags(): HasMany
+    {
+        return $this->hasMany(Flags::class, 'comment_id');
+    }
+    public function likes(): HasMany
+    {
+        return $this->hasMany(ProductLike::class, 'comment_id');
     }
 }

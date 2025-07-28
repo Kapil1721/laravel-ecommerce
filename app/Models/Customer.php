@@ -42,7 +42,8 @@ class Customer extends Authenticatable implements MustVerifyEmail, CanResetPassw
     {
         return $this->hasMany(CustomerAddress::class, 'customer_id');
     }
-    public function address() {
+    public function address()
+    {
         return $this->belongsTo(CustomerAddress::class, 'address_id') ?? $this->addresses()->first();
     }
     public function country()
@@ -58,5 +59,20 @@ class Customer extends Authenticatable implements MustVerifyEmail, CanResetPassw
     public function orders()
     {
         return $this->belongsTo(Orders::class, 'customer_id');
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(ProductComment::class, 'customer_id');
+    }
+
+    public function flags()
+    {
+        return $this->hasMany(Flags::class, 'customer_id');
+    }
+
+    public function likes()
+    {
+        return $this->hasMany(Likes::class, 'customer_id');
     }
 }

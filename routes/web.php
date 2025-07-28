@@ -38,6 +38,8 @@
 
 // Route::get('categories', [EcommerceController::class, 'categories'])->name('categories');
 
+use Illuminate\Routing\Route;
+
 Route::get('/', function () {
     return 'Hello World';
 });
